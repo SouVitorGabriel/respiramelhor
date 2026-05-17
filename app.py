@@ -24,6 +24,8 @@ st.markdown("""
 [data-testid="stToolbar"], [data-testid="stStatusWidget"],
 [data-testid="stHeader"], .stDeployButton { display: none !important; }
 .block-container { padding: 0 !important; margin: 0 !important; }
+iframe{ height: 100vh !important; width: 100% !important; border: none !important; }            
+.st-emotion-cache-tn0cau{gap:0 !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -291,7 +293,8 @@ fc_data_js   = json.dumps([None]*len(hist24_labels) + fc_conc)
 # ================================
 # HTML COMPLETO
 # ================================
-HTML_COMPLETO = f"""<!DOCTYPE html>
+# language=html
+HTML_COMPLETO =  f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -659,7 +662,9 @@ goTo(0);
 # ================================
 # EXIBIR
 # ================================
-st.iframe(HTML_COMPLETO, height=860, width="stretch")
+st.iframe(HTML_COMPLETO, height="stretch", width="stretch")
+
+st.write(f"Current Mode: {st.session_state.theme_mode}")
 
 # Recarregar dados a cada 10 minutos — carrossel roda em JS, sem piscar
 time.sleep(600)
