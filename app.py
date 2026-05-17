@@ -68,7 +68,7 @@ NOMES_POL = {
 POLUENTES = ["MP2.5", "MP10", "O3", "NO2", "CO", "SO2"]
 SLIDE_NAMES = ["📊 Visão Geral", "🔮 Previsão (MP2.5)", "📋 Qualidade do Ar", "ℹ️ Sobre"]
 INTERVALO_SEGUNDOS = 20
-APP_URL = "https://respiramelhor.streamlit.app"
+APP_URL = "https://respiramelhor.onrender.com/"
 
 FEATURES_MODELO = [
     "MP25", "MP10", "O3", "NO2", "hora_sin", "hora_cos", "dia_semana",
