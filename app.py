@@ -340,6 +340,33 @@ td:first-child{{text-align:left;font-weight:600}}
 @media(max-width:480px){{
   .cards-grid{{grid-template-columns:repeat(2,1fr)}}
 }}
+  .cards-layout {{
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }}
+
+  #card-left,
+  #card-right {{
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
+  }}
+
+  @media (max-width: 768px), (orientation: portrait) {{
+    .cards-layout {{
+      flex-direction: column;
+    }}
+
+    #card-left,
+    #card-right {{
+      width: 100%;
+    }}
+  }}
+
+  .table-wrap {{
+    overflow-x: auto;
+  }}
 </style>
 </head>
 <body>
@@ -354,60 +381,8 @@ td:first-child{{text-align:left;font-weight:600}}
   <span style="font-size:11px;color:#8A94A6;white-space:nowrap">
     CETESB Itaim Paulista · {coleta_ts.strftime("%d/%m/%Y %H:%M")}</span>
 </div>
-
-<!-- SLIDE 0 - VISÃO GERAL -->
-<div class="slide" id="slide0">
-  <div style="display:grid;grid-template-columns:minmax(120px,160px) 1fr;
-              gap:12px;margin-bottom:15px">
-    <div style="background:{bg};border:1px solid {cc}40;border-radius:14px;
-                padding:14px;text-align:center">
-      <div style="font-size:13px;font-weight:600;color:{cc}">IQAr</div>
-      <div style="font-size:52px;font-weight:700">{iqa_geral:.0f}</div>
-      <div class="badge" style="background:{cc}22;color:{cc};margin-top:6px">{nc}</div>
-    </div>
-    <div style="background:{bg};border:1px solid {cc}40;border-radius:14px;padding:14px">
-      <div style="font-size:16px;font-weight:700;color:{cc};margin-bottom:6px">
-        {icon_nc} {nc}</div>
-      <div style="font-size:14px;color:#2c3e50;line-height:1.5">
-        {RECOMENDACOES.get(nc, "")}</div>
-      <div style="margin-top:8px;font-size:13px;color:#8A94A6">
-        Principal poluente: <b>{NOMES_POL.get(pol_critico, pol_critico)}</b></div>
-    </div>
-  </div>
-  <div class="cards-grid">{cards_html}</div>
-  <div class="card">
-    <div class="title-text">📈 Evolução dos poluentes — últimas 48h</div>
-    <div style="position:relative;height:260px;width:100%"><canvas id="chart0"></canvas></div>
-  </div>
-</div>
-
-<!-- SLIDE 1 - PREVISÃO -->
-<div class="slide" id="slide1">
-  <div style="display:grid;grid-template-columns:minmax(120px,160px) 1fr;
-              gap:12px;margin-bottom:15px">
-    <div style="background:{bg};border:1px solid {cc}40;border-radius:14px;
-                padding:14px;text-align:center">
-      <div style="font-size:12px;color:#8A94A6">IQAr atual</div>
-      <div style="font-size:42px;font-weight:700">{iqa_geral:.0f}</div>
-      <div class="badge" style="background:{cc}22;color:{cc};margin-top:4px">{nc}</div>
-    </div>
-    <div class="info-box">
-      <b style="font-size:15px">🤖 Previsão com IA (XGBoost)</b><br>
-      {"Modelo treinado com dados históricos da CETESB. Prevê concentração de MP2.5 para as próximas 6 horas usando 25 features." if tem_previsao else "⚠️ Arquivo modelo_xgboost.pkl não encontrado. Exibindo dados históricos apenas."}
-    </div>
-  </div>
-  <div class="card" style="margin-bottom:8px">
-    <div class="title-text">📊 MP2.5 — histórico (24h) + previsão (6h)</div>
-    <div style="position:relative;height:220px;width:100%"><canvas id="chart1"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="title-text">🎯 IQAr previsto (MP2.5)</div>
-    <div style="position:relative;height:200px;width:100%"><canvas id="chart2"></canvas></div>
-  </div>
-</div>
-
-<!-- SLIDE 2 - QUALIDADE DO AR -->
-<div class="slide" id="slide2">
+<div class="cards-layout">
+ <div id="card-left">
   <div style="background:{bg};border:1px solid {cc}40;border-radius:14px;
               padding:16px;margin-bottom:12px;display:flex;align-items:center;
               gap:16px;flex-wrap:wrap">
@@ -451,9 +426,8 @@ td:first-child{{text-align:left;font-weight:600}}
       <div>Evitar sair de casa. Suspender atividades externas. SAMU: 192.</div></div>
   </div>
 </div>
-
-<!-- SLIDE 3 - SOBRE -->
-<div class="slide" id="slide3">
+  <div id="card-right">
+  
   <div class="info-box">
     <b style="font-size:17px">ℹ️ O que é o IQAr?</b><br>
     O Índice de Qualidade do Ar vai de <b>0 a 400</b> — quanto menor, melhor o ar.
@@ -497,46 +471,12 @@ td:first-child{{text-align:left;font-weight:600}}
     </span>
   </div>
 </div>
-
 </div>
-
-<!-- NAVEGAÇÃO FIXA -->
-<div class="footer-nav">
-  <div id="nav-dots">
-    <span class="nav-dot active" onclick="goTo(0)"></span>
-    <span class="nav-dot"        onclick="goTo(1)"></span>
-    <span class="nav-dot"        onclick="goTo(2)"></span>
-    <span class="nav-dot"        onclick="goTo(3)"></span>
-  </div>
-  <span id="slide-lbl" style="font-size:13px;color:#777;white-space:nowrap">
-    📊 Visão Geral (1/4)</span>
-  <div class="prog-track"><div id="prog" class="prog-fill"></div></div>
 </div>
 
 <script>
-const NAMES = {json.dumps(SLIDE_NAMES)};
-const INTV  = {INTERVALO_SEGUNDOS} * 1000;
-let cur = 0, timer, progTimer;
 
-function goTo(n) {{
-  document.querySelectorAll('.slide').forEach((s,i)=> s.classList.toggle('active',i===n));
-  document.querySelectorAll('.nav-dot').forEach((d,i)=> d.classList.toggle('active',i===n));
-  document.getElementById('slide-lbl').innerText = NAMES[n] + ` (${{n+1}}/4)`;
-  cur = n;
-  resetTimer();
-}}
 
-function resetTimer() {{
-  clearTimeout(timer); clearInterval(progTimer);
-  const bar = document.getElementById('prog');
-  bar.style.width = '0%';
-  const start = Date.now();
-  progTimer = setInterval(()=> {{
-    const pct = (Date.now()-start)/INTV*100;
-    bar.style.width = Math.min(pct,100)+'%';
-  }}, 50);
-  timer = setTimeout(()=> goTo((cur+1)%4), INTV);
-}}
 
 // Config padrão Chart.js
 Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
@@ -663,9 +603,6 @@ goTo(0);
 # EXIBIR
 # ================================
 st.iframe(HTML_COMPLETO, height="stretch", width="stretch")
-
-st.write(f"Current Mode: {st.session_state.theme_mode}")
-
 # Recarregar dados a cada 10 minutos — carrossel roda em JS, sem piscar
 time.sleep(600)
 st.rerun()
