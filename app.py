@@ -442,7 +442,7 @@ td:first-child{{text-align:left;font-weight:600}}
     <div>
       <div style="font-size:16px;font-weight:700;margin-bottom:6px">📱 Acesse pelo celular</div>
       <a href="{APP_URL}" target="_blank"
-         style="color:#185FA5;font-size:14px">respiramelhor.streamlit.app</a>
+         style="color:#185FA5;font-size:14px">{APP_URL}</a>
       <div style="font-size:13px;color:#8A94A6;margin-top:4px">
         Aponte a câmera para o QR Code</div>
     </div>
