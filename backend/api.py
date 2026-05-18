@@ -275,3 +275,11 @@ def get_qualidade_ar():
             }
         }
     }
+
+@app.get("/")
+def health_check():
+    return {"status": "ok", "message": "API Respira Melhor rodando perfeitamente!"}
+
+@app.head("/")
+def health_check_head():
+    return {"status": "ok"}
