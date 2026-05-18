@@ -314,769 +314,288 @@ HTML_COMPLETO =  f"""<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
-<style>
-html, body {{
-    margin:0;
-    padding:0;
-    min-height:100vh;
-    width:100%;
-    background:var(--bg) !important;
-    color:var(--text) !important;
+/* ================================
+   1. RESET & GERAL
+================================ */
+* {{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }}
 
-body, button, input, textarea, select, table, th, td, div, span, p, a {{
-    color:inherit;
-    font:inherit;
+html, body {{
+    min-height: 100vh;
+    width: 100%;
 }}
 
 body {{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    background:var(--bg) !important;
-    color:var(--text) !important;
-    padding:12px;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    text-rendering:optimizeLegibility;
+    /* !important adicionado para barrar a fonte serifada do Streamlit */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    padding: 12px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition: background .25s ease, color .25s ease;
+}}
+
+body, button, input, textarea, select, table, th, td, div, span, p, a {{
+    font-family: inherit;
+    color: inherit;
 }}
 
 iframe, canvas {{
-    color-scheme:inherit;
+    color-scheme: inherit;
 }}
 
+a {{
+    color: var(--primary);
+    text-decoration: none;
+}}
+
+a:hover {{
+    color: var(--primary-hover);
+}}
+
+/* ================================
+   2. VARIÁVEIS DE TEMA
+================================ */
 :root {{
     color-scheme: light;
-    --bg:#F0F2F5;
-    --surface:#FFFFFF;
-    --surface-2:#F8F9FA;
-    --surface-3:#EEF2F6;
-    --border:#E8ECF0;
-    --border-soft:#DCE3EA;
-
-    --text:#1A1A2E;
-    --text-strong:#131322;
-    --text-muted:#5A6575;
-    --text-faint:#8A94A6;
-
-    --primary:#185FA5;
-    --primary-hover:#144C84;
-    --primary-strong:#0F4A84;
-    --primary-soft:#EBF3FD;
-
-    --info-bg:#EBF3FD;
-    --info-border:#185FA5;
-
-    --table-head:#2C3E50;
-    --table-head-text:#FFFFFF;
-
-    --dot:#D0D5DD;
-    --track:#E8ECF0;
-
-    --good-bg:#DDF6E8;
-    --moderate-bg:#FCEFCB;
-    --bad-bg:#F9E1CC;
-    --very-bad-bg:#F7D6D2;
-    --terrible-bg:#E8DCF5;
-
+    --bg:#F0F2F5; --surface:#FFFFFF; --surface-2:#F8F9FA; --surface-3:#EEF2F6;
+    --border:#E8ECF0; --border-soft:#DCE3EA;
+    --text:#1A1A2E; --text-strong:#131322; --text-muted:#5A6575; --text-faint:#8A94A6;
+    
+    --primary:#185FA5; --primary-hover:#144C84; --primary-strong:#0F4A84; --primary-soft:#EBF3FD;
+    
+    /* Nova paleta Danger (Vermelho) - Tema Claro */
+    --danger:#D32F2F; --danger-hover:#C62828; --danger-strong:#B71C1C; --danger-soft:#FFEBEE;
+    
+    --info-bg:#EBF3FD; --info-border:#185FA5;
+    --table-head:#2C3E50; --table-head-text:#FFFFFF;
+    --dot:#D0D5DD; --track:#E8ECF0;
+    --good-bg:#DDF6E8; --moderate-bg:#FCEFCB; --bad-bg:#F9E1CC; --very-bad-bg:#F7D6D2; --terrible-bg:#E8DCF5;
     --shadow:0 8px 24px rgba(16,24,40,.06);
 }}
 
 html[data-theme="dark"] {{
     color-scheme: dark;
-    --bg:#1E1D1C;
-    --surface:#2B2A29;
-    --surface-2:#323130;
-    --surface-3:#3A3938;
-    --border:#454341;
-    --border-soft:#3A3836;
-
-    --text:#F1ECE6;
-    --text-strong:#FBF7F2;
-    --text-muted:#C8C1B8;
-    --text-faint:#A59D93;
-
-    --primary:#6EA8DC;
-    --primary-hover:#84B8E5;
-    --primary-strong:#9CC8EC;
-    --primary-soft:#2A3945;
-
-    --info-bg:#2C353D;
-    --info-border:#6EA8DC;
-
-    --table-head:#353B42;
-    --table-head-text:#F6F7F8;
-
-    --dot:#6A655F;
-    --track:#454341;
-
-    --good-bg:#22362B;
-    --moderate-bg:#3D3424;
-    --bad-bg:#433126;
-    --very-bad-bg:#472B2A;
-    --terrible-bg:#3B3143;
-
+    --bg:#1E1D1C; --surface:#2B2A29; --surface-2:#323130; --surface-3:#3A3938;
+    --border:#454341; --border-soft:#3A3836;
+    --text:#F1ECE6; --text-strong:#FBF7F2; --text-muted:#C8C1B8; --text-faint:#A59D93;
+    
+    /* Paleta Primary ajustada para melhor contraste e vibração no escuro */
+    --primary:#3B82F6; --primary-hover:#60A5FA; --primary-strong:#93C5FD; --primary-soft:#1E293B;
+    
+    /* Nova paleta Danger (Vermelho) - Tema Escuro */
+    --danger:#EF5350; --danger-hover:#F44336; --danger-strong:#E53935; --danger-soft:#3B1818;
+    
+    /* Info border atualizada para combinar com o novo azul primário */
+    --info-bg:#2C353D; --info-border:#3B82F6; 
+    --table-head:#353B42; --table-head-text:#F6F7F8;
+    --dot:#6A655F; --track:#454341;
+    --good-bg:#22362B; --moderate-bg:#3D3424; --bad-bg:#433126; --very-bad-bg:#472B2A; --terrible-bg:#3B3143;
     --shadow:0 8px 24px rgba(0,0,0,.24);
 }}
 
 html[data-theme="light"] {{
     color-scheme: light;
 }}
-*{{margin:0;padding:0;box-sizing:border-box}}
 
-html, body {{
-    min-height:100vh;
-}}
+/* ================================
+   3. ESTRUTURA E LAYOUT
+================================ */
+.content-wrap {{ padding-bottom:60px; }}
+.cards-layout {{ display:flex; gap:16px; align-items:flex-start; margin-bottom:12px; }}
+.card-left, .card-right {{ flex:1 1 0; min-width:0; box-sizing:border-box; }}
+.cards-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:15px; }}
+.slide-top-grid {{ margin-bottom: 12px; }}
 
-body {{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:12px;
-    transition:background .25s ease,color .25s ease;
-}}
-
-a {{
-    color:var(--primary);
-    text-decoration:none;
-}}
-
-a:hover {{
-    color:var(--primary-hover);
-}}
-
+/* ================================
+   4. COMPONENTES COMUNS
+================================ */
 .card {{
-    background:var(--surface);
-    border-radius:16px;
-    padding:16px;
-    border:1px solid var(--border);
-    box-shadow:var(--shadow);
+    background:var(--surface); border-radius:16px; padding:16px;
+    border:1px solid var(--border); box-shadow:var(--shadow);
 }}
-
 .badge {{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    padding:5px 14px;
-    border-radius:30px;
-    font-size:14px;
-    font-weight:600;
-    background:var(--surface-2);
-    color:var(--text);
-    border:1px solid var(--border);
+    display:inline-flex; align-items:center; gap:6px; padding:5px 14px;
+    border-radius:30px; font-size:14px; font-weight:600;
+    background:var(--surface-2); color:var(--text); border:1px solid var(--border);
 }}
+.title-text {{ font-size:16px; font-weight:700; margin-bottom:12px; color:var(--text-strong); }}
 
-.slide {{display:none}}
-.slide.active {{display:block}}
+.section-card, .chart-card, .qr-card, .hero-banner, .aqr-switcher, .info-box {{ margin-bottom:12px; }}
+.chart-wrap {{ height:260px; }}
+.chart-wrap-lg {{ height:300px; }}
 
-.nav-dot {{
-    width:12px;
-    height:12px;
-    border-radius:50%;
-    background:var(--dot);
-    display:inline-block;
-    margin:0 6px;
-    cursor:pointer;
-    transition:all .2s;
-}}
-
-.nav-dot.active {{
-    background:var(--primary);
-    transform:scale(1.2);
-}}
-
-.cards-grid {{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-    gap:12px;
-    margin-bottom:15px;
-}}
-
-.footer-nav {{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    background:var(--surface);
-    border-top:1px solid var(--border);
-    padding:12px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-    flex-wrap:wrap;
-    z-index:100;
-}}
-
-.prog-track {{
-    flex:1;
-    height:4px;
-    background:var(--track);
-    border-radius:2px;
-    margin:0 10px;
-}}
-
-.prog-fill {{
-    height:4px;
-    background:var(--primary);
-    border-radius:2px;
-    width:0%;
-    transition:width .3s linear;
-}}
-
-.content-wrap {{
-    padding-bottom:60px;
-}}
-
-.title-text {{
-    font-size:16px;
-    font-weight:700;
-    margin-bottom:12px;
-    color:var(--text-strong);
-}}
-
-.table-wrap {{
-    overflow-x:auto;
-}}
-
-table {{
-    width:100%;
-    border-collapse:collapse;
-    background:var(--surface);
-    border-radius:12px;
-    overflow:hidden;
-}}
-
-th, td {{
-    padding:10px 8px;
-    text-align:center;
-    font-size:13px;
-    border-bottom:1px solid var(--border-soft);
-}}
-
-th {{
-    background:var(--table-head);
-    color:var(--table-head-text);
-    font-weight:600;
-}}
-
-td {{
-    color:var(--text);
-}}
-
-td:first-child {{
-    text-align:left;
-    font-weight:600;
-    color:var(--text-strong);
-}}
-
-.table-row-good {{
-    background:var(--good-bg);
-}}
-
-.table-row-moderate {{
-    background:var(--moderate-bg);
-}}
-
-.table-row-bad {{
-    background:var(--bad-bg);
-}}
-
-.table-row-very-bad {{
-    background:var(--very-bad-bg);
-}}
-
-.table-row-terrible {{
-    background:var(--terrible-bg);
-}}
-
-.sintomas-grid {{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:10px;
-    margin-top:12px;
-}}
-
-.sintoma-card {{
-    border-radius:12px;
-    padding:12px;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-}}
-
-.sintoma-card div:first-child {{
-    font-size:14px;
-    font-weight:700;
-    margin-bottom:4px;
-    color:var(--text-strong);
-}}
-
-.sintoma-card div:last-child {{
-    font-size:12px;
-    line-height:1.4;
-    color:var(--text-muted);
-}}
-
-.info-box {{
-    background:var(--info-bg);
-    border-left:4px solid var(--info-border);
-    border-radius:10px;
-    padding:14px;
-    margin-bottom:12px;
-    font-size:14px;
-    line-height:1.6;
-    color:var(--text);
-}}
-
-.cards-layout {{
-    display:flex;
-    gap:16px;
-    align-items:flex-start;
-}}
-
-.card-left, .card-right {{
-    flex:1 1 0;
-    min-width:0;
-    box-sizing:border-box;
-}}
-
+/* ================================
+   5. HEADER
+================================ */
 .header-bar {{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    background:var(--surface);
-    border-radius:12px;
-    padding:12px 16px;
-    margin-bottom:12px;
-    border:1px solid var(--border);
-    box-shadow:var(--shadow);
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--surface); border-radius:12px; padding:12px 16px;
+    margin-bottom:12px; border:1px solid var(--border); box-shadow:var(--shadow);
 }}
-
-.header-meta {{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    min-width:0;
-}}
-
-.header-title {{
-    font-size:18px;
-    font-weight:700;
-    color:var(--text-strong);
-}}
-
-.header-subtitle {{
-    font-size:11px;
-    color:var(--text-faint);
-    white-space:nowrap;
-}}
-
-.header-actions {{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-shrink:0;
-}}
+.header-meta {{ display:flex; flex-direction:column; gap:2px; min-width:0; }}
+.header-title {{ font-size:18px; font-weight:700; color:var(--text-strong); }}
+.header-subtitle {{ font-size:11px; color:var(--text-faint); white-space:nowrap; }}
+.header-actions {{ display:flex; align-items:center; gap:8px; flex-shrink:0; }}
 
 .theme-toggle {{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-width:40px;
-    height:40px;
-    padding:0 12px;
-    border:none;
-    border-radius:999px;
-    background:var(--surface-2);
-    color:var(--text);
-    cursor:pointer;
-    border:1px solid var(--border);
-    transition:background .2s ease, transform .2s ease, border-color .2s ease;
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:40px; height:40px; padding:0 12px; border:none; border-radius:999px;
+    background:var(--surface-2); color:var(--text); cursor:pointer;
+    border:1px solid var(--border); transition:background .2s ease, transform .2s ease, border-color .2s ease;
 }}
+.theme-toggle:hover {{ background:var(--surface-3); border-color:var(--primary); }}
+.theme-toggle:active {{ transform:translateY(1px); }}
+.theme-toggle:focus-visible {{ outline:2px solid var(--primary); outline-offset:2px; }}
 
-.theme-toggle:hover {{
-    background:var(--surface-3);
-    border-color:var(--primary);
-}}
-
-.theme-toggle:active {{
-    transform:translateY(1px);
-}}
-
-.theme-toggle:focus-visible {{
-    outline:2px solid var(--primary);
-    outline-offset:2px;
-}}
-
+/* ================================
+   6. CARDS DE DESTAQUE (HERO / SCORE)
+================================ */
 .hero-banner {{
-    border-radius:14px;
-    padding:16px;
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
-    gap:16px;
-    flex-wrap:wrap;
-    border:1px solid var(--border);
-    color:var(--text);
+    border-radius:14px; padding:16px; display:flex; align-items:center; 
+    gap:16px; flex-wrap:wrap; border:1px solid var(--border); color:var(--text);
 }}
+.hero-banner-center {{ justify-content: center; text-align: center; }}
 
-.hero-boa{{
-    background:var(--good-bg);
-    border-color:color-mix(in srgb, #27AE60 38%, var(--border));
-}}
-.hero-moderada{{
-    background:var(--moderate-bg);
-    border-color:color-mix(in srgb, #F39C12 38%, var(--border));
-}}
-.hero-ruim{{
-    background:var(--bad-bg);
-    border-color:color-mix(in srgb, #E67E22 38%, var(--border));
-}}
-.hero-muito-ruim{{
-    background:var(--very-bad-bg);
-    border-color:color-mix(in srgb, #E74C3C 38%, var(--border));
-}}
-.hero-pessima{{
-    background:var(--terrible-bg);
-    border-color:color-mix(in srgb, #8E44AD 38%, var(--border));
-}}
+.hero-boa {{ background:var(--good-bg); border-color:color-mix(in srgb, #27AE60 38%, var(--border)); }}
+.hero-moderada {{ background:var(--moderate-bg); border-color:color-mix(in srgb, #F39C12 38%, var(--border)); }}
+.hero-ruim {{ background:var(--bad-bg); border-color:color-mix(in srgb, #E67E22 38%, var(--border)); }}
+.hero-muito-ruim {{ background:var(--very-bad-bg); border-color:color-mix(in srgb, #E74C3C 38%, var(--border)); }}
+.hero-pessima {{ background:var(--terrible-bg); border-color:color-mix(in srgb, #8E44AD 38%, var(--border)); }}
 
-.hero-banner-score {{
-    font-size:48px;
-    font-weight:700;
-    color:var(--status-color);
-    line-height:1;
-}}
+.hero-banner-score {{ font-size:48px; font-weight:700; color:var(--status-color); line-height:1; }}
+.hero-banner-content {{ display:flex; flex-direction:column; gap:4px; }}
+.hero-banner-title {{ font-size:18px; font-weight:700; color:var(--status-color); margin-bottom:6px; }}
+.hero-banner-text {{ font-size:14px; color:var(--text-muted); line-height:1.5; }}
 
-.hero-banner-content {{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-}}
+.card-left-top {{ display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 12px; margin-bottom: 15px; align-items: stretch; }}
+.status-surface {{ border-radius: 14px; padding: 14px; margin-bottom: 0; border: 1px solid color-mix(in srgb, var(--accent-color) 38%, var(--border)); }}
+.iqar-summary-card {{ display: flex; align-items: center; justify-content: center; text-align: center; }}
+.iqar-summary-inner {{ display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 100%; }}
+.iqar-eyebrow {{ font-size: 13px; font-weight: 600; line-height: 1.2; }}
+.iqar-score {{ font-size: 52px; font-weight: 700; line-height: 1; color: var(--text-strong); }}
+.status-accent-text {{ color: var(--accent-color) !important; }}
 
-.hero-banner-title {{
-    font-size:18px;
-    font-weight:700;
-    color:var(--status-color);
+.status-badge {{
+  margin-top: 2px;
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+  color: var(--accent-color) !important;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border));
 }}
+.primary-pollutant-card {{ min-width: 0; }}
+.slide-meta-text {{ margin-top: 8px; font-size: 13px; color: var(--text-faint); }}
+.slide-eyebrow {{ font-size:14px; font-weight:600; margin-bottom:4px; }}
+.slide-eyebrow-muted {{ color:var(--text-muted); }}
 
-.hero-banner-text {{
-    font-size:14px;
-    color:var(--text-muted);
-    line-height:1.5;
-}}
-
+/* ================================
+   7. CARDS DE POLUENTES
+================================ */
 .pol-card {{
-    background:var(--surface);
-    border-radius:14px;
-    padding:14px;
-    text-align:center;
-    border:1px solid var(--border);
+    background:var(--surface); border-radius:14px; padding:14px;
+    text-align:center; border:1px solid var(--border);
 }}
+.pol-card-empty {{ background:var(--surface-2); }}
+.pol-card-name {{ font-size:14px; font-weight:600; color:var(--text-faint); }}
+.pol-card-iqa {{ font-size:34px; font-weight:700; margin-top:4px; line-height:1.1; }}
+.pol-card-iqa-empty {{ color:var(--text-faint); }}
+.pol-card-value {{ font-size:13px; color:var(--text-muted); margin:4px 0; }}
+.pol-card-status {{ font-size:13px; font-weight:600; }}
+.pol-card-empty-text {{ font-size:12px; color:var(--text-faint); margin-top:8px; }}
 
-.pol-card-empty {{
-    background:var(--surface-2);
-}}
+/* ================================
+   8. TABELAS
+================================ */
+.table-wrap {{ overflow-x:auto; }}
+table {{ width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; }}
+th, td {{ padding:10px 8px; text-align:center; font-size:13px; border-bottom:1px solid var(--border-soft); }}
+th {{ background:var(--table-head); color:var(--table-head-text); font-weight:600; }}
+td {{ color:var(--text); }}
+td:first-child {{ text-align:left; font-weight:600; color:var(--text-strong); }}
 
-.pol-card-name {{
-    font-size:14px;
-    font-weight:600;
-    color:var(--text-faint);
-}}
+.table-row-good {{ background:var(--good-bg); }}
+.table-row-moderate {{ background:var(--moderate-bg); }}
+.table-row-bad {{ background:var(--bad-bg); }}
+.table-row-very-bad {{ background:var(--very-bad-bg); }}
+.table-row-terrible {{ background:var(--terrible-bg); }}
 
-.pol-card-iqa {{
-    font-size:34px;
-    font-weight:700;
-    margin-top:4px;
-    line-height:1.1;
+/* ================================
+   9. INFORMAÇÕES E BOTÕES
+================================ */
+.info-box {{
+    background:var(--info-bg); border-left:4px solid var(--info-border); color:var(--text);
+    border-radius:10px; padding:14px; font-size:14px; line-height:1.6;
 }}
-
-.pol-card-iqa-empty {{
-    color:var(--text-faint);
-}}
-
-.pol-card-value {{
-    font-size:13px;
-    color:var(--text-muted);
-    margin:4px 0;
-}}
-
-.pol-card-status {{
-    font-size:13px;
-    font-weight:600;
-}}
-
-.pol-card-empty-text {{
-    font-size:12px;
-    color:var(--text-faint);
-    margin-top:8px;
-}}
-
-.section-card {{
-    margin-bottom:12px;
-}}
-
-.qr-card {{
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
-    gap:20px;
-    flex-wrap:wrap;
-}}
-
-.qr-image {{
-    width:110px;
-    height:110px;
-    border-radius:12px;
-    border:2px solid var(--border);
-    flex-shrink:0;
-    background:var(--surface-2);
-}}
-
-.qr-content {{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-}}
-
-.qr-title {{
-    font-size:16px;
-    font-weight:700;
-    color:var(--text-strong);
-}}
-
-.qr-link {{
-    font-size:14px;
-}}
-
-.qr-help {{
-    font-size:13px;
-    color:var(--text-faint);
-    margin-top:4px;
-}}
-
-.about-text {{
-    font-size:14px;
-    color:var(--text-muted);
-    line-height:1.6;
-}}
-
-.about-text strong {{
-    color:var(--text-strong);
-}}
+.info-box-title {{ font-size: 15px; color: var(--text-strong); margin-bottom: 6px; display: inline-block; }}
 
 .note-box {{
-    margin-top:10px;
-    padding:10px 14px;
-    background:var(--surface-2);
-    border-radius:10px;
-    border-left:3px solid var(--text-faint);
+    margin-top:10px; padding:10px 14px; background:var(--surface-2);
+    border-radius:10px; border-left:3px solid var(--text-faint);
 }}
+.note-box span {{ font-size:12px; color:var(--text-faint); }}
 
-.note-box span {{
-    font-size:12px;
-    color:var(--text-faint);
-}}
+.qr-card {{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }}
+.qr-image {{ width:110px; height:110px; border-radius:12px; border:2px solid var(--border); flex-shrink:0; background:var(--surface-2); }}
+.qr-content {{ display:flex; flex-direction:column; gap:4px; }}
+.qr-title {{ font-size:16px; font-weight:700; color:var(--text-strong); }}
+.qr-link {{ font-size:14px; color:var(--primary); }}
+.qr-link:hover {{ color:var(--primary-hover); }}
+.qr-help {{ font-size:13px; color:var(--text-faint); margin-top:4px; }}
 
-.aqr-switcher {{
-    margin-top:12px;
-}}
+.about-text {{ font-size:14px; color:var(--text-muted); line-height:1.6; }}
+.about-text strong {{ color:var(--text-strong); }}
 
-.aqr-switcher-grid {{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:10px;
-}}
-
-.aqr-switcher-card {{
-    border-radius:12px;
-    padding:12px;
-    border:1px solid var(--border);
-}}
-
-.aqr-switcher-title {{
-    font-size:14px;
-    font-weight:700;
-    margin-bottom:4px;
-}}
-
-.aqr-switcher-text {{
-    font-size:12px;
-    line-height:1.4;
-    color:var(--text-muted);
-}}
+.aqr-switcher-grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }}
+.aqr-switcher-card {{ background:var(--surface); border-radius:12px; padding:12px; border:1px solid var(--border); }}
+.aqr-switcher-title {{ font-size:14px; font-weight:700; margin-bottom:4px; }}
+.aqr-switcher-text {{ font-size:12px; line-height:1.4; color:var(--text-muted); }}
 
 .aqr-switcher-notice {{
-    margin-top:12px;
-    padding:12px 14px;
-    background:var(--surface-2);
-    border-left:3px solid var(--primary);
-    border-radius:10px;
-    font-size:12px;
-    line-height:1.6;
-    color:var(--text-muted);
+    margin-top:12px; padding:12px 14px; background:var(--surface-2); border-left:3px solid var(--primary);
+    border-radius:10px; font-size:12px; line-height:1.6; color:var(--text-muted);
 }}
-
 .aqr-switcher-btn {{
-    margin-top:10px;
-    width:100%;
-    border:none;
-    border-radius:12px;
-    background:var(--primary);
-    color:#fff;
-    font-size:14px;
-    font-weight:600;
-    padding:12px 14px;
-    cursor:pointer;
+    margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--primary);
+    color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer;
     transition:background .2s ease, transform .2s ease;
 }}
+.aqr-switcher-btn:hover {{ background:var(--primary-hover); }}
+.aqr-switcher-btn:active {{ transform:translateY(1px); }}
 
-.aqr-switcher-btn:hover {{
-    background:var(--primary-hover);
+.logoff-btn {{
+    margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--danger);
+    color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer;
+    transition:background .2s ease, transform .2s ease;
 }}
+.logoff-btn:hover {{ background:var(--danger-hover); }}
+.logoff-btn:active {{ transform:translateY(1px); }}
 
-.aqr-switcher-btn:active {{
-    transform:translateY(1px);
-}}
-
-.chart-card {{
-    margin-bottom:12px;
-}}
-
-.chart-wrap {{
-    height:260px;
-}}
-
-.chart-wrap-lg {{
-    height:300px;
-}}
-
-body {{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:12px;
-    transition:background .25s ease,color .25s ease;
-}}
-
-.header-title,
-.title-text,
-.qr-title,
-.about-text strong,
-td:first-child,
-.hero-banner-title {{
-    color:var(--text-strong);
-}}
-
-.header-subtitle,
-.pol-card-name,
-.pol-card-value,
-.aqr-switcher-text,
-.aqr-switcher-notice,
-.about-text,
-.note-box span,
-.qr-help,
-.hero-banner-text,
-td {{
-    color:var(--text-muted);
-}}
-
-.card,
-.pol-card,
-.header-bar,
-.footer-nav,
-table,
-.note-box,
-.aqr-switcher-card,
-.qr-image {{
-    background:var(--surface);
-    border-color:var(--border);
-}}
-
-.pol-card-empty,
-.sintoma-card,
-.theme-toggle,
-.badge,
-.aqr-switcher-notice,
-.note-box {{
-    background:var(--surface-2);
-}}
-
-.info-box {{
-    background:var(--info-bg);
-    border-left:4px solid var(--info-border);
-    color:var(--text);
-}}
-
-th {{
-    background:var(--table-head);
-    color:var(--table-head-text);
-}}
-
-th, td {{
-    border-bottom:1px solid var(--border-soft);
-}}
-
-.hero-banner {{
-    color:var(--text);
-}}
-
-.hero-banner-text {{
-    color:var(--text);
-}}
-
-.qr-link,
-a {{
-    color:var(--primary);
-}}
-
-.qr-link:hover,
-a:hover {{
-    color:var(--primary-hover);
-}}
-
+/* ================================
+   10. MEDIA QUERIES
+================================ */
 @media (max-width:768px), (orientation:portrait) {{
-    .cards-layout {{
-        flex-direction:column;
-    }}
-
-    .card-left, .card-right {{
-        width:100%;
-    }}
-
-    .table-wrap {{
-        overflow-x:auto;
-    }}
-
-    .header-title {{
-        font-size:14px!important;
-    }}
-
-    .header-bar {{
-        align-items:flex-start;
-    }}
-
-    .header-subtitle {{
-        white-space:normal;
-    }}
-
-    .theme-toggle {{
-        min-width:38px;
-        height:38px;
-        padding:0 10px;
-    }}
-}}
-
-@media(max-width:768px) {{
-    .cards-grid {{
-        grid-template-columns:repeat(3,1fr);
-        gap:8px;
-    }}
+    .cards-layout {{ flex-direction:column; }}
+    .card-left, .card-right {{ width:100%; }}
+    .table-wrap {{ overflow-x:auto; }}
+    .header-title {{ font-size:14px!important; }}
+    .header-bar {{ align-items:flex-start; }}
+    .header-subtitle {{ white-space:normal; }}
+    .theme-toggle {{ min-width:38px; height:38px; padding:0 10px; }}
+    
+    /* Mantém os cards lado a lado, mas dá uma margem menor pro card do score */
+    .card-left-top {{ grid-template-columns: minmax(100px, 130px) 1fr; }}
+    .iqar-summary-card {{ min-height: auto; }}
+    .iqar-score {{ font-size: 48px; }}
+    
+    .cards-grid {{ grid-template-columns:repeat(3,1fr); gap:8px; }}
 }}
 
 @media(max-width:480px) {{
-    .cards-grid {{
-        grid-template-columns:repeat(2,1fr);
-    }}
+    .cards-grid {{ grid-template-columns:repeat(2,1fr); }}
 }}
 </style>
 </head>
@@ -1102,15 +621,28 @@ a:hover {{
     </div>
 </div>
 
-<div class="cards-layout">
+<div class="cards-layout" id="cardsLayout1">
  <div id="card-left" class="card-left">
-<div class="hero-banner {hero_class}">
-        <div class="hero-banner-score">{iqa_geral:.0f}</div>
-        <div class="hero-banner-content">
-            <div class="hero-banner-title">{nc}</div>
-            <div class="hero-banner-text">{RECOMENDACOES.get(nc, "")}</div>
-        </div>
+<div class="card-left-top">
+    <div class="iqar-summary-card status-surface {hero_class}" style="--accent-color:{cc};">
+      <div class="iqar-summary-inner">
+        <div class="iqar-eyebrow status-accent-text">IQAr</div>
+        <div class="iqar-score">{iqa_geral:.0f}</div>
+        <div class="badge status-badge">{nc}</div>
+      </div>
     </div>
+
+    <div class="primary-pollutant-card status-surface {hero_class}" style="--accent-color:{cc};">
+      <div class="hero-banner-title status-accent-text">{icon_nc} {nc}</div>
+      <div class="hero-banner-text">
+        {RECOMENDACOES.get(nc, "")}
+      </div>
+      <div class="slide-meta-text">
+        Principal poluente: <b>{NOMES_POL.get(pol_critico, pol_critico)}</b>
+      </div>
+    </div>
+  </div>
+
 
     <div class="card section-card">
         <div class="title-text">Tabela CONAMA 506/2024 vigente desde 01/01/2026</div>
@@ -1144,9 +676,7 @@ a:hover {{
         <div class="aqr-switcher-notice" id="aqrNotice">
             Deslocamentos necessários, inclusive para atendimento de saúde, não devem ser adiados. Sempre que possível, reduza a exposição e observe o aparecimento de sintomas.
         </div>
-        <button id="aqrToggleBtn" class="aqr-switcher-btn" type="button" aria-label="Trocar modelo de linguagem das recomendações">
-            Alterar linguagem das recomendações
-        </button>
+        
     </div>
 </div>
 
@@ -1189,8 +719,73 @@ a:hover {{
                 Os dados são atualizados a cada hora e refletem a qualidade do ar nas últimas horas, não o instante exato da consulta.
             </span>
         </div>
+        <button id="loginBtn" class="aqr-switcher-btn" type="button" aria-label="Acessar área logada">
+            Acessar área logada
+        </button>
     </div>
 </div>
+</div>
+
+<div class="cards-layout" id="cardsLayout2" style="display:none;">
+<div id="card-left" class="card-left">
+  <div class="card-left-top">
+    <div class="iqar-summary-card status-surface {hero_class}" style="--accent-color:{cc};">
+      <div class="iqar-summary-inner">
+        <div class="iqar-eyebrow status-accent-text">IQAr</div>
+        <div class="iqar-score">{iqa_geral:.0f}</div>
+        <div class="badge status-badge">{nc}</div>
+      </div>
+    </div>
+
+    <div class="primary-pollutant-card status-surface {hero_class}" style="--accent-color:{cc};">
+      <div class="hero-banner-title status-accent-text">{icon_nc} {nc}</div>
+      <div class="hero-banner-text">
+        {RECOMENDACOES.get(nc, "")}
+      </div>
+      <div class="slide-meta-text">
+        Principal poluente: <b>{NOMES_POL.get(pol_critico, pol_critico)}</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-grid">{cards_html}</div>
+
+  <div class="card chart-card">
+    <div class="title-text">📈 Evolução dos poluentes — últimas 48h</div>
+    <div class="chart-wrap">
+      <canvas id="chart0"></canvas>
+    </div>
+  </div>
+</div>
+
+<div id="card-right" class="card-right">
+  <div class="slide-top-grid">
+    
+
+    <div class="info-box">
+      <b class="info-box-title">Previsão com IA (XGBoost)</b><br>
+      {'Modelo treinado com dados históricos da CETESB. Prevê concentração de MP2.5 para as próximas 6 horas usando 25 features.' if tem_previsao else 'Arquivo modelo_xgboost.pkl não encontrado. Exibindo dados históricos apenas.'}
+    </div>
+  </div>
+
+  <div class="card chart-card">
+    <div class="title-text">MP2.5 histórico 24h + previsão 6h</div>
+    <div class="chart-wrap">
+      <canvas id="chart1"></canvas>
+    </div>
+  </div>
+
+  <div class="card chart-card">
+    <div class="title-text">IQAr previsto (MP2.5)</div>
+    <div class="chart-wrap">
+      <canvas id="chart2"></canvas>
+    </div>
+    <button id="logoffBtn" class="logoff-btn" type="button" aria-label="Acessar área logada">
+            Sair área logada
+        </button>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -1305,6 +900,36 @@ a:hover {{
   const cardsEl = document.getElementById("aqrCards");
   const noticeEl = document.getElementById("aqrNotice");
   const btnEl = document.getElementById("aqrToggleBtn");
+  const btLogin = document.getElementById("loginBtn");
+  const btnLogoff = document.getElementById("logoffBtn");
+  const cardLayout1 = document.getElementById("cardsLayout1");
+  const cardLayout2 = document.getElementById("cardsLayout2");
+  
+
+    if (btLogin) {{
+    btLogin.addEventListener("click", login);
+  }}
+    if (btnLogoff) {{
+    btnLogoff.addEventListener("click", logoff);
+  }}
+
+  function login() {{ 
+     let senha = prompt("Área logada. Digite a senha de acesso:");
+      if (senha === "vila123") {{
+        cardLayout1.style.display = "none";
+        cardLayout2.style.display = "flex";
+        window.scrollTo(0, 0);
+      }}
+      else{{
+        alert("Senha incorreta. Acesso negado.");
+      }}
+  }}
+
+  function logoff() {{
+    cardLayout1.style.display = "flex";
+    cardLayout2.style.display = "none";
+    window.scrollTo(0, 0);
+  }}
 
   function renderModelo() {{
     refreshModelColors();
