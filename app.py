@@ -54,11 +54,11 @@ CLASSES_IQA = [
 # Recomendações baseadas em OMS, EPA e CETESB
 # Efeitos à saúde por faixa — base científica, não normativa
 RECOMENDACOES = {
-    "Boa":        "Sem restrições. Atividades ao ar livre liberadas para todos.",
-    "Moderada":   "Grupos sensíveis devem reduzir esforço físico intenso ao ar livre.",
-    "Ruim":       "Grupos sensíveis: evitar atividades ao ar livre. População geral: reduzir esforços.",
-    "Muito Ruim": "Evitar exposição ao ar livre. Permanecer em ambientes fechados.",
-    "Péssima":    "Evitar sair de casa. Suspender atividades externas. Procurar atendimento se necessário.",
+    "Boa":        "Ar em boa condição. A rotina e as atividades ao ar livre podem seguir normalmente.",
+    "Moderada":   "Pessoas mais sensíveis devem pegar leve em exercícios ao ar livre se houver incômodo.",
+    "Ruim": "O ar pode causar desconforto, principalmente em pessoas sensíveis. Evite esforço forte na rua.",
+    "Muito Ruim": "O ar pode piorar tosse, cansaço e falta de ar. Evite esforço ao ar livre e reduza a exposição.",
+    "Péssima":    "O risco à saúde está alto. Evite exposição prolongada e procure a UBS se os sintomas piorarem.",
 }
 NOMES_POL = {
     "MP2.5": "Partículas Finas", "MP10": "Partículas Inaláveis",
@@ -297,6 +297,8 @@ fc_data_js   = json.dumps([None]*len(hist24_labels) + fc_conc)
 HTML_COMPLETO =  f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -367,6 +369,70 @@ td:first-child{{text-align:left;font-weight:600}}
   .table-wrap {{
     overflow-x: auto;
   }}
+
+  .aqr-switcher{{
+  margin-top:12px;
+}}
+
+.aqr-switcher-grid{{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+}}
+
+.aqr-switcher-card{{
+  border-radius:12px;
+  padding:12px;
+}}
+
+.aqr-switcher-title{{
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:4px;
+}}
+
+.aqr-switcher-text{{
+  font-size:12px;
+  line-height:1.4;
+  color:#1a1a2e;
+}}
+
+.aqr-switcher-notice{{
+  margin-top:12px;
+  padding:12px 14px;
+  background:#F5F7FA;
+  border-left:3px solid #185FA5;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.6;
+  color:#5A6575;
+}}
+.aqr-switcher-btn{{
+  margin-top:10px;
+  width:100%;
+  border:none;
+  border-radius:12px;
+  background:#185FA5;
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+  padding:12px 14px;
+  cursor:pointer;
+  transition:background .2s ease, transform .2s ease;
+}}
+
+.aqr-switcher-btn:hover{{
+  background:#144c84;
+}}
+
+.aqr-switcher-btn:active{{
+  transform:translateY(1px);
+}}
+
+.aqr-switcher-btn:focus-visible{{
+  outline:2px solid #185FA5;
+  outline-offset:2px;
+}}
 </style>
 </head>
 <body>
@@ -408,23 +474,23 @@ td:first-child{{text-align:left;font-weight:600}}
       </table>
     </div>
   </div>
-  <div class="sintomas-grid">
-    <div class="sintoma-card" style="background:#E8F8EF">
-      <div style="color:#27AE60">🟢 Boa</div>
-      <div>Sem restrições. Atividades ao ar livre liberadas para todos.</div></div>
-    <div class="sintoma-card" style="background:#FEF9E7">
-      <div style="color:#F39C12">🟡 Moderada</div>
-      <div>Grupos sensíveis devem reduzir esforço físico intenso ao ar livre.</div></div>
-    <div class="sintoma-card" style="background:#FEF0E7">
-      <div style="color:#E67E22">🟠 Ruim</div>
-      <div>Grupos sensíveis: evitar ao ar livre. População geral: reduzir esforços.</div></div>
-    <div class="sintoma-card" style="background:#FDEDEC">
-      <div style="color:#E74C3C">🔴 Muito Ruim</div>
-      <div>Evitar exposição ao ar livre. Permanecer em ambientes fechados.</div></div>
-    <div class="sintoma-card" style="background:#F5EEF8">
-      <div style="color:#8E44AD">⚫ Péssima</div>
-      <div>Evitar sair de casa. Suspender atividades externas. SAMU: 192.</div></div>
+  <div id="aqr-switcher" class="aqr-switcher">
+  <div class="aqr-switcher-grid" id="aqrCards"></div>
+
+  <div class="aqr-switcher-notice" id="aqrNotice">
+    Deslocamentos necessários, inclusive para atendimento de saúde, não devem ser adiados. Sempre que possível, reduza a exposição e observe o aparecimento de sintomas.
   </div>
+
+  <button
+  style="display:none"
+    id="aqrToggleBtn"
+    class="aqr-switcher-btn"
+    type="button"
+    aria-label="Trocar modelo de linguagem das recomendações"
+  >
+    Alterar linguagem das recomendações
+  </button>
+</div>
 </div>
   <div id="card-right">
   
@@ -453,8 +519,7 @@ td:first-child{{text-align:left;font-weight:600}}
       Serviço informativo da <b>UBS Vila Curuçá</b>. Baseado no Guia MMA/CETESB jan/2025
       e CONAMA 506/2024.<br><br>
       <b style="color:#1a1a2e">Não substitui orientação médica.</b><br>
-      Em situação Muito Ruim ou Péssima, siga a CETESB e a Vigilância Sanitária.<br>
-      Sintomas graves: UBS ou <b>192 (SAMU)</b>.<br><br>
+      Situação muito ruim ou péssima e com sintomas graves procure a <b>UBS.</b><br><br>
       <b style="color:#1a1a2e">Grupos sensíveis:</b>
       <span style="color:#5A6575"> crianças, idosos, gestantes, asmáticos,
       pessoas com doenças respiratórias (DPOC, bronquite) ou cardiovasculares.</span><br><br>
@@ -476,6 +541,117 @@ td:first-child{{text-align:left;font-weight:600}}
 
 <script>
 
+(function () {{
+  const modelos = [
+    {{
+      id: "sus",
+      nome: "Institucional SUS",
+      aviso: "Deslocamentos necessários, inclusive para atendimento de saúde, não devem ser adiados. Sempre que possível, reduza a exposição e observe o aparecimento de sintomas.",
+      cards: [
+        {{ bg:"#E8F8EF", color:"#27AE60", titulo:"🟢 Boa", texto:"Qualidade do ar satisfatória. Não há restrições para atividades habituais ao ar livre para a população em geral." }},
+        {{ bg:"#FEF9E7", color:"#F39C12", titulo:"🟡 Moderada", texto:"Pessoas de grupos mais sensíveis, como crianças, idosos, gestantes e pessoas com doenças respiratórias ou cardíacas, devem reduzir esforço físico intenso ao ar livre se apresentarem desconforto." }},
+        {{ bg:"#FEF0E7", color:"#E67E22", titulo:"🟠 Ruim", texto:"A qualidade do ar pode causar sintomas em grupos sensíveis e desconforto em parte da população. Recomenda-se reduzir atividades físicas intensas ao ar livre e priorizar ambientes mais protegidos sempre que possível." }},
+        {{ bg:"#FDEDEC", color:"#E74C3C", titulo:"🔴 Muito Ruim", texto:"A exposição ao ar poluído pode agravar sintomas respiratórios e cardiovasculares. Reduza o tempo de permanência ao ar livre e evite esforço físico intenso, especialmente se houver sintomas." }},
+        {{ bg:"#F5EEF8", color:"#8E44AD", titulo:"⚫ Péssima", texto:"Situação de maior risco à saúde. Evite exposição prolongada ao ar livre e atividades externas não essenciais; em caso de falta de ar, dor no peito, tontura ou piora importante de sintomas, procure uma UBS, UPA ou outro serviço de saúde." }}
+      ]
+    }},
+    {{
+      id: "popular",
+      nome: "App popular",
+      aviso: "Se você precisar sair para trabalhar, comprar alimentos ou ir à UBS, UPA ou hospital, não adie. O mais importante é reduzir a exposição e buscar ajuda se os sintomas piorarem.",
+      cards: [
+  {{
+    bg:"#E8F8EF",
+    color:"#27AE60",
+    titulo:"🟢 Boa",
+    texto:"Ar em boa condição. A rotina e as atividades ao ar livre podem seguir normalmente."
+  }},
+  {{
+    bg:"#FEF9E7",
+    color:"#F39C12",
+    titulo:"🟡 Moderada",
+    texto:"Pessoas mais sensíveis devem pegar leve em exercícios ao ar livre se houver incômodo."
+  }},
+  {{
+    bg:"#FEF0E7",
+    color:"#E67E22",
+    titulo:"🟠 Ruim",
+    texto:"O ar pode causar desconforto, principalmente em pessoas sensíveis. Evite esforço forte na rua."
+  }},
+  {{
+    bg:"#FDEDEC",
+    color:"#E74C3C",
+    titulo:"🔴 Muito Ruim",
+    texto:"O ar pode piorar tosse, cansaço e falta de ar. Evite esforço ao ar livre e reduza a exposição."
+  }},
+  {{
+    bg:"#F5EEF8",
+    color:"#8E44AD",
+    titulo:"⚫ Péssima",
+    texto:"O risco à saúde está alto. Evite exposição prolongada e procure a UBS se os sintomas piorarem."
+  }}
+]
+    }},
+    {{
+      id: "tecnico",
+      nome: "Técnica jurídica",
+      aviso: "Este aviso tem caráter informativo e preventivo. Deslocamentos indispensáveis, inclusive para atendimento em UBS, UPA, hospital ou outros serviços de saúde, não devem ser postergados; na ocorrência de falta de ar, dor torácica, tontura ou piora importante de sintomas, recomenda-se avaliação por serviço de saúde.",
+      cards: [
+        {{ bg:"#E8F8EF", color:"#27AE60", titulo:"🟢 Boa", texto:"Qualidade do ar classificada como satisfatória, sem indicação de restrições adicionais para atividades habituais ao ar livre na população em geral." }},
+        {{ bg:"#FEF9E7", color:"#F39C12", titulo:"🟡 Moderada", texto:"Indivíduos de maior susceptibilidade, incluindo crianças, idosos, gestantes e pessoas com doenças respiratórias ou cardiovasculares, devem considerar a redução de esforço físico intenso ao ar livre na presença de sintomas ou desconforto." }},
+        {{ bg:"#FEF0E7", color:"#E67E22", titulo:"🟠 Ruim", texto:"A condição do ar pode produzir efeitos adversos em grupos sensíveis e desconforto em parte da população. Recomenda-se reduzir atividades físicas intensas em ambiente externo e priorizar, sempre que viável, ambientes com menor exposição." }},
+        {{ bg:"#FDEDEC", color:"#E74C3C", titulo:"🔴 Muito Ruim", texto:"A exposição ambiental pode favorecer agravamento de manifestações respiratórias e cardiovasculares. Recomenda-se redução do tempo de exposição ao ar livre e evitar esforço físico intenso, especialmente entre pessoas sintomáticas ou mais vulneráveis." }},
+        {{ bg:"#F5EEF8", color:"#8E44AD", titulo:"⚫ Péssima", texto:"Condição associada a maior probabilidade de efeitos adversos à saúde. Recomenda-se evitar exposição prolongada ao ar livre e atividades externas não essenciais, sem prejuízo de deslocamentos necessários, inclusive para acesso a serviços de saúde quando houver sinais de agravamento clínico." }}
+      ]
+    }}
+  ];
+
+  let indiceAtual = 1;
+
+  const cardsEl = document.getElementById("aqrCards");
+  const noticeEl = document.getElementById("aqrNotice");
+  const btnEl = document.getElementById("aqrToggleBtn");
+
+  function renderModelo() {{
+    const modelo = modelos[indiceAtual];
+
+    cardsEl.innerHTML = modelo.cards.map(card => `
+      <div class="aqr-switcher-card" style="background:${{card.bg}}">
+        <div class="aqr-switcher-title" style="color:${{card.color}}">${{card.titulo}}</div>
+        <div class="aqr-switcher-text">${{card.texto}}</div>
+      </div>
+    `).join("");
+
+    noticeEl.textContent = modelo.aviso;
+  }}
+
+  function mostrarToast() {{
+    const modelo = modelos[indiceAtual];
+    Toastify({{
+      text: `Linguagem ativa: ${{modelo.nome}}`,
+      duration: 2400,
+      gravity: "top",
+      position: "right",
+      close: true,
+      stopOnFocus: true,
+      style: {{
+        background: "#1f2937",
+        color: "#ffffff",
+        borderRadius: "12px"
+      }}
+    }}).showToast();
+  }}
+
+  function trocarModelo() {{
+    indiceAtual = (indiceAtual + 1) % modelos.length;
+    renderModelo();
+    mostrarToast();
+  }}
+
+  noticeEl.addEventListener("click", trocarModelo);
+
+  renderModelo();
+}})();
 
 
 // Config padrão Chart.js
