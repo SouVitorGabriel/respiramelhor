@@ -81,10 +81,18 @@ html[data-theme="dark"] {
 .theme-toggle { display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:40px; border:none; border-radius:999px; background:var(--surface-2); cursor:pointer; border:1px solid var(--border); }
 
 /* ================================
-   6. CARDS DE DESTAQUE
+   6. CARDS DE DESTAQUE & STATUS
 ================================ */
 .card-left-top { display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 12px; margin-bottom: 15px; align-items: stretch; }
 .status-surface { border-radius: 14px; padding: 14px; margin-bottom: 0; border: 1px solid color-mix(in srgb, var(--accent-color) 38%, var(--border)); }
+
+/* Classes de Estado do IQAr - Estas vão colorir o fundo usando CSS Variables */
+.hero-boa { background:var(--good-bg); border-color:color-mix(in srgb, #27AE60 38%, var(--border)); }
+.hero-moderada { background:var(--moderate-bg); border-color:color-mix(in srgb, #F39C12 38%, var(--border)); }
+.hero-ruim { background:var(--bad-bg); border-color:color-mix(in srgb, #E67E22 38%, var(--border)); }
+.hero-muito-ruim { background:var(--very-bad-bg); border-color:color-mix(in srgb, #E74C3C 38%, var(--border)); }
+.hero-pessima { background:var(--terrible-bg); border-color:color-mix(in srgb, #8E44AD 38%, var(--border)); }
+
 .iqar-summary-card { display: flex; align-items: center; justify-content: center; text-align: center; }
 .iqar-summary-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
 .iqar-eyebrow { font-size: 13px; font-weight: 600; line-height: 1.2; }
@@ -104,20 +112,51 @@ html[data-theme="dark"] {
 .pol-card-iqa { font-size:34px; font-weight:700; margin-top:4px; }
 .pol-card-value { font-size:13px; color:var(--text-muted); margin:4px 0; }
 .pol-card-status { font-size:13px; font-weight:600; }
+.pol-card-empty-text { font-size:12px; color:var(--text-faint); margin-top:8px; } /* Adicionado o texto vazio cinza */
+
 .info-box { background:var(--info-bg); border-left:4px solid var(--info-border); border-radius:10px; padding:14px; font-size:14px; line-height:1.6; }
+.note-box { margin-top:10px; padding:10px 14px; background:var(--surface-2); border-radius:10px; border-left:3px solid var(--text-faint); }
+.note-box span { font-size:12px; color:var(--text-faint); }
+
+.qr-card { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.qr-wrapper { 
+    width: 110px; height: 110px; 
+    border-radius: 12px; 
+    border: 2px solid var(--border); 
+    flex-shrink: 0; 
+    background: #FFFFFF; /* Fundo branco obrigatório para garantir a leitura */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 8px; /* Este padding afasta a imagem das bordas arredondadas */
+}
+.qr-wrapper img { 
+    width: 100%; 
+    height: 100%; 
+    display: block; 
+}
+.qr-content { display:flex; flex-direction:column; gap:4px; }
+.qr-title { font-size:16px; font-weight:700; color:var(--text-strong); }
+.qr-link { font-size:14px; color:var(--primary); }
+.qr-help { font-size:13px; color:var(--text-faint); margin-top:4px; }
+
 .table-wrap { overflow-x:auto; }
 table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; }
 th, td { padding:10px 8px; text-align:center; font-size:13px; border-bottom:1px solid var(--border-soft); }
 th { background:var(--table-head); color:var(--table-head-text); font-weight:600; }
+td { color:var(--text); }
+th:first-child, td:first-child { text-align:left; font-weight:600; } /* Ajuste de alinhamento do Título da Tabela */
+
 .aqr-switcher-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
 .aqr-switcher-card { background:var(--surface); border-radius:12px; padding:12px; border:1px solid var(--border); }
 .aqr-switcher-title { font-size:14px; font-weight:700; margin-bottom:4px; }
 .aqr-switcher-text { font-size:12px; line-height:1.4; color:var(--text-muted); }
 .aqr-switcher-notice { margin-top:12px; padding:12px 14px; background:var(--surface-2); border-left:3px solid var(--primary); border-radius:10px; font-size:12px; }
+
 .btn-primary { margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--primary); color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer; }
 .btn-danger { margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--danger); color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer; }
 
-/* Status Colors Genéricas */
+/* Status Colors Genéricas (Tabelas) */
 .bg-boa { background: var(--good-bg); }
 .bg-moderada { background: var(--moderate-bg); }
 .bg-ruim { background: var(--bad-bg); }
@@ -161,7 +200,7 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
 <div class="cards-layout" id="cardsLayout1">
     <div class="card-left">
         <div class="card-left-top">
-            <div class="iqar-summary-card status-surface ui-dynamic-bg">
+            <div class="iqar-summary-card status-surface ui-dynamic-bg hero-pessima">
               <div class="iqar-summary-inner">
                 <div class="iqar-eyebrow status-accent-text">IQAr</div>
                 <div class="iqar-score" id="iqa-geral">--</div>
@@ -169,7 +208,7 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
               </div>
             </div>
 
-            <div class="primary-pollutant-card status-surface ui-dynamic-bg">
+            <div class="primary-pollutant-card status-surface ui-dynamic-bg hero-pessima">
               <div class="hero-banner-title status-accent-text" id="iqa-titulo">--</div>
               <div class="hero-banner-text" id="iqa-recomendacao">Carregando dados da estação...</div>
               <div class="slide-meta-text">Principal poluente: <b id="poluente-critico">--</b></div>
@@ -177,37 +216,101 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
         </div>
 
         <div class="card section-card">
-            <div class="title-text">Tabela CONAMA 506/2024</div>
+            <div class="title-text">Tabela CONAMA 506/2024 vigente desde 01/01/2026</div>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Qualidade</th><th>IQAr</th><th>MP2.5</th><th>MP10</th><th>O₃</th><th>NO₂</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Qualidade</th>
+                            <th>IQAr</th>
+                            <th>MP2.5</th>
+                            <th>MP10</th>
+                            <th>O₃</th>
+                            <th>NO₂</th>
+                            <th>CO</th>
+                            <th>SO₂</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        <tr class="bg-boa"><td>🟢 Boa</td><td>0–40</td><td>0–15</td><td>0–45</td><td>0–100</td><td>0–200</td></tr>
-                        <tr class="bg-moderada"><td>🟡 Moderada</td><td>41–80</td><td>15–50</td><td>45–100</td><td>100–130</td><td>200–240</td></tr>
-                        <tr class="bg-ruim"><td>🟠 Ruim</td><td>81–120</td><td>50–75</td><td>100–150</td><td>130–160</td><td>240–320</td></tr>
-                        <tr class="bg-muito-ruim"><td>🔴 Muito Ruim</td><td>121–200</td><td>75–125</td><td>150–250</td><td>160–200</td><td>320–1130</td></tr>
-                        <tr class="bg-pessima"><td>⚫ Péssima</td><td>201–400</td><td>125–300</td><td>250–600</td><td>200–800</td><td>1130–3750</td></tr>
+                        <tr class="bg-boa"><td>🟢 N1 — Boa</td><td>0–40</td><td>0–15</td><td>0–45</td><td>0–100</td><td>0–200</td><td>0–9</td><td>0–40</td></tr>
+                        <tr class="bg-moderada"><td>🟡 N2 — Moderada</td><td>41–80</td><td>15–50</td><td>45–100</td><td>100–130</td><td>200–240</td><td>9–11</td><td>40–50</td></tr>
+                        <tr class="bg-ruim"><td>🟠 N3 — Ruim</td><td>81–120</td><td>50–75</td><td>100–150</td><td>130–160</td><td>240–320</td><td>11–13</td><td>50–125</td></tr>
+                        <tr class="bg-muito-ruim"><td>🔴 N4 — Muito Ruim</td><td>121–200</td><td>75–125</td><td>150–250</td><td>160–200</td><td>320–1130</td><td>13–15</td><td>125–800</td></tr>
+                        <tr class="bg-pessima"><td>⚫ N5 — Péssima</td><td>201–400</td><td>125–300</td><td>250–600</td><td>200–800</td><td>1130–3750</td><td>15–50</td><td>800–2620</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div class="aqr-switcher">
-            <div class="aqr-switcher-grid" id="aqrCards"></div>
-            <div class="aqr-switcher-notice" id="aqrNotice">--</div>
+            <div class="aqr-switcher-grid">
+                <div class="aqr-switcher-card bg-boa">
+                    <div class="aqr-switcher-title" style="color:#27AE60">🟢 Boa</div>
+                    <div class="aqr-switcher-text">Ar em boa condição. A rotina e as atividades ao ar livre podem seguir normalmente.</div>
+                </div>
+                <div class="aqr-switcher-card bg-moderada">
+                    <div class="aqr-switcher-title" style="color:#F39C12">🟡 Moderada</div>
+                    <div class="aqr-switcher-text">Pessoas mais sensíveis devem pegar leve em exercícios ao ar livre se houver incômodo.</div>
+                </div>
+                <div class="aqr-switcher-card bg-ruim">
+                    <div class="aqr-switcher-title" style="color:#E67E22">🟠 Ruim</div>
+                    <div class="aqr-switcher-text">O ar pode causar desconforto, principalmente em pessoas sensíveis. Evite esforço forte na rua.</div>
+                </div>
+                <div class="aqr-switcher-card bg-muito-ruim">
+                    <div class="aqr-switcher-title" style="color:#E74C3C">🔴 Muito Ruim</div>
+                    <div class="aqr-switcher-text">O ar pode piorar tosse, cansaço e falta de ar. Evite esforço ao ar livre e reduza a exposição.</div>
+                </div>
+                <div class="aqr-switcher-card bg-pessima">
+                    <div class="aqr-switcher-title" style="color:#8E44AD">⚫ Péssima</div>
+                    <div class="aqr-switcher-text">O risco à saúde está alto. Evite exposição prolongada e procure a UBS se os sintomas piorarem.</div>
+                </div>
+            </div>
+            <div class="aqr-switcher-notice">
+                Se você precisar sair para trabalhar, comprar alimentos ou ir à UBS, UPA ou hospital, não adie. O mais importante é reduzir a exposição e buscar ajuda se os sintomas piorarem.
+            </div>
         </div>
     </div>
 
     <div class="card-right">
         <div class="info-box">
-            <b>O que é o IQAr?</b><br>O Índice de Qualidade do Ar vai de <b>0 a 400</b>; quanto menor, melhor. A nota final é sempre a do poluente mais crítico no momento.
+            <b>O que é o IQAr?</b><br>
+            O Índice de Qualidade do Ar vai de <b>0 a 400</b>; quanto menor, melhor o ar.
+            Sensores medem os poluentes a cada hora e uma fórmula linear os converte numa nota única, sempre a do poluente mais preocupante.
+            Tabela vigente desde <b>01/01/2026</b> conforme <b>CONAMA 506/2024</b>.
         </div>
+
+        <div class="card qr-card">
+            <div class="qr-wrapper">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://respiramelhor.onrender.com/&margin=2" alt="QR Code para acessar o painel">
+            </div>
+            <div class="qr-content">
+                <div class="qr-title">Acesse pelo celular</div>
+                <a href="https://respiramelhor.onrender.com/" target="_blank" class="qr-link">https://respiramelhor.onrender.com/</a>
+                <div class="qr-help">Aponte a câmera para o QR Code</div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="title-text">Sobre este painel</div>
             <div style="font-size:14px; color:var(--text-muted); line-height:1.6;">
-                Serviço informativo da <strong>UBS Vila Curuçá</strong>. Baseado no Guia MMA/CETESB jan/2025.<br><br>
-                <strong>Grupos sensíveis:</strong> crianças, idosos, gestantes, asmáticos, e pessoas com doenças respiratórias/cardíacas.
+                Serviço informativo da <strong>UBS Vila Curuçá</strong>. Baseado no Guia MMA/CETESB jan/2025 e CONAMA 506/2024.
+                <br><br>
+                <strong>Não substitui orientação médica.</strong><br>
+                Situação muito ruim ou péssima e com sintomas graves: procure a <strong>UBS</strong>.
+                <br><br>
+                <strong>Grupos sensíveis:</strong>
+                crianças, idosos, gestantes, asmáticos, pessoas com doenças respiratórias (DPOC, bronquite) ou cardiovasculares.
+                <br><br>
+                <span style="font-size:11px; color:var(--text-faint);">
+                    Recomendações baseadas em diretrizes técnico-científicas da OMS, EPA e CETESB.
+                    Episódio Crítico: responsabilidade CETESB / CONAMA 491/2018, Art. 10–11.
+                </span>
             </div>
+
+            <div class="note-box">
+                <span>Os dados são atualizados a cada hora e refletem a qualidade do ar nas últimas horas, não o instante exato da consulta.</span>
+            </div>
+
             <button id="loginBtn" class="btn-primary" type="button">Acessar área logada (Admin)</button>
         </div>
     </div>
@@ -216,14 +319,14 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
 <div class="cards-layout" id="cardsLayout2" style="display:none;">
     <div class="card-left">
         <div class="card-left-top">
-            <div class="iqar-summary-card status-surface ui-dynamic-bg">
+            <div class="iqar-summary-card status-surface ui-dynamic-bg hero-pessima">
               <div class="iqar-summary-inner">
                 <div class="iqar-eyebrow status-accent-text">IQAr</div>
                 <div class="iqar-score ui-iqa-geral">--</div>
                 <div class="badge status-badge ui-iqa-badge">--</div>
               </div>
             </div>
-            <div class="primary-pollutant-card status-surface ui-dynamic-bg">
+            <div class="primary-pollutant-card status-surface ui-dynamic-bg hero-pessima">
               <div class="hero-banner-title status-accent-text ui-iqa-titulo">--</div>
               <div class="hero-banner-text ui-iqa-recomendacao">--</div>
               <div class="slide-meta-text">Principal poluente: <b class="ui-poluente-critico">--</b></div>
@@ -242,7 +345,7 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
     <div class="card-right">
         <div class="info-box">
             <b class="info-box-title">Previsão com IA (XGBoost)</b><br>
-            O modelo prevê a concentração de Partículas Finas (MP2.5) para as próximas 6 horas usando dados históricos.
+            Modelo treinado com dados históricos da CETESB. Prevê a concentração de Partículas Finas (MP2.5) para as próximas 6 horas.
         </div>
         <div class="card chart-card">
             <div class="title-text">MP2.5 histórico 24h + previsão 6h</div>
@@ -264,7 +367,6 @@ th { background:var(--table-head); color:var(--table-head-text); font-weight:600
 const API_URL = "http://127.0.0.1:8000/api/qualidade"; // URL Local para teste
 const TEMPO_CACHE_MS = 15 * 60 * 1000; // 15 minutos
 
-// Variáveis globais para os gráficos (para poder destruí-los ao recarregar)
 let chart0Instance = null;
 let chart1Instance = null;
 let chart2Instance = null;
@@ -283,7 +385,6 @@ function applyChartTheme() {
     Chart.defaults.color = getCssVar("--text-faint");
     Chart.defaults.borderColor = getCssVar("--border-soft");
     
-    // Se os gráficos já existem, precisamos atualizá-los quando trocar de tema
     if(chart0Instance) chart0Instance.update();
     if(chart1Instance) chart1Instance.update();
     if(chart2Instance) chart2Instance.update();
@@ -374,8 +475,21 @@ function preencherInterface(dados) {
     elementsTitulo.forEach(el => el.textContent = `${dados.icone} ${dados.classificacao}`);
     elementsRec.forEach(el => el.textContent = dados.recomendacao_padrao);
 
+    // Mapeamento de Classes Dinâmicas (Resolve o Problema de Cores no Dark Mode)
+    const heroClassMap = {
+        "Boa": "hero-boa",
+        "Moderada": "hero-moderada",
+        "Ruim": "hero-ruim",
+        "Muito Ruim": "hero-muito-ruim",
+        "Péssima": "hero-pessima"
+    };
+    const currentHeroClass = heroClassMap[dados.classificacao] || "hero-pessima";
+    
     root.style.setProperty("--accent-color", dados.cor_hex);
-    document.querySelectorAll(".ui-dynamic-bg").forEach(el => { el.style.backgroundColor = dados.cor_bg_fundo; });
+    document.querySelectorAll(".ui-dynamic-bg").forEach(el => { 
+        el.classList.remove("hero-boa", "hero-moderada", "hero-ruim", "hero-muito-ruim", "hero-pessima");
+        el.classList.add(currentHeroClass);
+    });
 
     const containerPoluentes = document.getElementById("cards-poluentes");
     containerPoluentes.innerHTML = "";
@@ -404,7 +518,134 @@ function preencherInterface(dados) {
 }
 
 // ==========================================
-// 6. RENDERIZAR GRÁFICOS (CHART.JS)
+// 6. troca de frases do grid de cards (opcional, será removido na versão final para simplificar a interface)
+// ==========================================
+const modelosTexto = [
+  {
+    id: "sus",
+    aviso: "Deslocamentos necessários, inclusive para atendimento de saúde, não devem ser adiados. Sempre que possível, reduza a exposição e observe o aparecimento de sintomas.",
+    cards: [
+      {
+        titulo: "🟢 Boa",
+        texto: "Qualidade do ar satisfatória. Não há restrições para atividades habituais ao ar livre para a população em geral."
+      },
+      {
+        titulo: "🟡 Moderada",
+        texto: "Pessoas de grupos mais sensíveis, como crianças, idosos, gestantes e pessoas com doenças respiratórias ou cardíacas, devem reduzir esforço físico intenso ao ar livre se apresentarem desconforto."
+      },
+      {
+        titulo: "🟠 Ruim",
+        texto: "A qualidade do ar pode causar sintomas em grupos sensíveis e desconforto em parte da população. Recomenda-se reduzir atividades físicas intensas ao ar livre e priorizar ambientes mais protegidos sempre que possível."
+      },
+      {
+        titulo: "🔴 Muito Ruim",
+        texto: "A exposição ao ar poluído pode agravar sintomas respiratórios e cardiovasculares. Reduza o tempo de permanência ao ar livre e evite esforço físico intenso, especialmente se houver sintomas."
+      },
+      {
+        titulo: "⚫ Péssima",
+        texto: "Situação de maior risco à saúde. Evite exposição prolongada ao ar livre e atividades externas não essenciais; em caso de falta de ar, dor no peito, tontura ou piora importante de sintomas, procure uma UBS, UPA ou outro serviço de saúde."
+      }
+    ]
+  },
+  {
+    id: "popular",
+    aviso: "Se você precisar sair para trabalhar, comprar alimentos ou ir à UBS, UPA ou hospital, não adie. O mais importante é reduzir a exposição e buscar ajuda se os sintomas piorarem.",
+    cards: [
+      {
+        titulo: "🟢 Boa",
+        texto: "Ar em boa condição. A rotina e as atividades ao ar livre podem seguir normalmente."
+      },
+      {
+        titulo: "🟡 Moderada",
+        texto: "Pessoas mais sensíveis devem pegar leve em exercícios ao ar livre se houver incômodo."
+      },
+      {
+        titulo: "🟠 Ruim",
+        texto: "O ar pode causar desconforto, principalmente em pessoas sensíveis. Evite esforço forte na rua."
+      },
+      {
+        titulo: "🔴 Muito Ruim",
+        texto: "O ar pode piorar tosse, cansaço e falta de ar. Evite esforço ao ar livre e reduza a exposição."
+      },
+      {
+        titulo: "⚫ Péssima",
+        texto: "O risco à saúde está alto. Evite exposição prolongada e procure a UBS se os sintomas piorarem."
+      }
+    ]
+  },
+  {
+    id: "tecnico",
+    aviso: "Este aviso tem caráter informativo e preventivo. Deslocamentos indispensáveis, inclusive para atendimento em UBS, UPA, hospital ou outros serviços de saúde, não devem ser postergados; na ocorrência de falta de ar, dor torácica, tontura ou piora importante de sintomas, recomenda-se avaliação por serviço de saúde.",
+    cards: [
+      {
+        titulo: "🟢 Boa",
+        texto: "Qualidade do ar classificada como satisfatória, sem indicação de restrições adicionais para atividades habituais ao ar livre na população em geral."
+      },
+      {
+        titulo: "🟡 Moderada",
+        texto: "Indivíduos de maior susceptibilidade, incluindo crianças, idosos, gestantes e pessoas com doenças respiratórias ou cardiovasculares, devem considerar a redução de esforço físico intenso ao ar livre na presença de sintomas ou desconforto."
+      },
+      {
+        titulo: "🟠 Ruim",
+        texto: "A condição do ar pode produzir efeitos adversos em grupos sensíveis e desconforto em parte da população. Recomenda-se reduzir atividades físicas intensas em ambiente externo e priorizar, sempre que viável, ambientes com menor exposição."
+      },
+      {
+        titulo: "🔴 Muito Ruim",
+        texto: "A exposição ambiental pode favorecer agravamento de manifestações respiratórias e cardiovasculares. Recomenda-se redução do tempo de exposição ao ar livre e evitar esforço físico intenso, especialmente entre pessoas sintomáticas ou mais vulneráveis."
+      },
+      {
+        titulo: "⚫ Péssima",
+        texto: "Condição associada a maior probabilidade de efeitos adversos à saúde. Recomenda-se evitar exposição prolongada ao ar livre e atividades externas não essenciais, sem prejuízo de deslocamentos necessários, inclusive para acesso a serviços de saúde quando houver sinais de agravamento clínico."
+      }
+    ]
+  }
+];
+
+let modeloTextoAtual = 1;
+
+function aplicarModeloTextoSwitcher() {
+  const switcher = document.querySelector('.aqr-switcher');
+  if (!switcher) return;
+
+  const cards = switcher.querySelectorAll('.aqr-switcher-card');
+  const notice = switcher.querySelector('.aqr-switcher-notice');
+  const modelo = modelosTexto[modeloTextoAtual];
+
+  cards.forEach((card, index) => {
+    const dados = modelo.cards[index];
+    if (!dados) return;
+
+    const titulo = card.querySelector('.aqr-switcher-title');
+    const texto = card.querySelector('.aqr-switcher-text');
+
+    if (titulo) titulo.textContent = dados.titulo;
+    if (texto) texto.textContent = dados.texto;
+  });
+
+  if (notice) {
+    notice.textContent = modelo.aviso;
+  }
+}
+
+function trocarModeloTextoSwitcher() {
+  modeloTextoAtual = (modeloTextoAtual + 1) % modelosTexto.length;
+  aplicarModeloTextoSwitcher();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const switcher = document.querySelector('.aqr-switcher');
+  if (!switcher) return;
+
+  const notice = switcher.querySelector('.aqr-switcher-notice');
+  aplicarModeloTextoSwitcher();
+
+  if (notice) {
+    notice.style.cursor = 'pointer';
+    notice.addEventListener('click', trocarModeloTextoSwitcher);
+  }
+});
+// ==========================================
+// 7. RENDERIZAR GRÁFICOS (CHART.JS)
 // ==========================================
 function renderizarGraficos(graficos) {
     const baseOpts = {
@@ -416,8 +657,7 @@ function renderizarGraficos(graficos) {
         }
     };
 
-    // --- GRÁFICO 0: Histórico 48h ---
-    if(chart0Instance) chart0Instance.destroy(); // Destrói gráfico antigo se existir
+    if(chart0Instance) chart0Instance.destroy(); 
     chart0Instance = new Chart(document.getElementById("chart0"), {
         type: "line",
         data: {
@@ -435,7 +675,6 @@ function renderizarGraficos(graficos) {
         }
     });
 
-    // --- GRÁFICO 1: Histórico 24h + Previsão ---
     const allLabels = graficos.previsao_mp25.hist24_labels.concat(graficos.previsao_mp25.fc_labels);
     const histData = graficos.previsao_mp25.hist24_vals.concat(Array(graficos.previsao_mp25.fc_labels.length).fill(null));
     const fcData = Array(graficos.previsao_mp25.hist24_labels.length).fill(null).concat(graficos.previsao_mp25.fc_conc);
@@ -459,7 +698,6 @@ function renderizarGraficos(graficos) {
         });
     }
 
-    // --- GRÁFICO 2: IQAr Previsto com Faixas de Cores ---
     const fcLabels = graficos.previsao_mp25.fc_labels;
     const fcIqa = graficos.previsao_mp25.fc_iqa;
     
@@ -502,7 +740,6 @@ function renderizarGraficos(graficos) {
     }
 }
 
-// Iniciar a aplicação
 iniciarApp();
 </script>
 </body>
