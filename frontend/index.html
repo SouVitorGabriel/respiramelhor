@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Respira Melhor - UBS Vila Curuçá</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+/* ================================
+   1. RESET & GERAL
+================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100vh; width: 100%; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    background: var(--bg) !important; color: var(--text) !important; padding: 12px;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    transition: background .25s ease, color .25s ease;
+}
+body, button, input, textarea, select, table, th, td, div, span, p, a { font-family: inherit; color: inherit; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-hover); }
+
+/* ================================
+   2. VARIÁVEIS DE TEMA
+================================ */
+:root {
+    color-scheme: light;
+    --bg:#F0F2F5; --surface:#FFFFFF; --surface-2:#F8F9FA; --surface-3:#EEF2F6;
+    --border:#E8ECF0; --border-soft:#DCE3EA;
+    --text:#1A1A2E; --text-strong:#131322; --text-muted:#5A6575; --text-faint:#8A94A6;
+    --primary:#185FA5; --primary-hover:#144C84; --primary-strong:#0F4A84; --primary-soft:#EBF3FD;
+    --danger:#D32F2F; --danger-hover:#C62828; --danger-strong:#B71C1C; --danger-soft:#FFEBEE;
+    --info-bg:#EBF3FD; --info-border:#185FA5;
+    --table-head:#2C3E50; --table-head-text:#FFFFFF;
+    --good-bg:#DDF6E8; --moderate-bg:#FCEFCB; --bad-bg:#F9E1CC; --very-bad-bg:#F7D6D2; --terrible-bg:#E8DCF5;
+    --shadow:0 8px 24px rgba(16,24,40,.06);
+    --accent-color: #8A94A6; /* Cor padrão alterada via JS */
+}
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:#1E1D1C; --surface:#2B2A29; --surface-2:#323130; --surface-3:#3A3938;
+    --border:#454341; --border-soft:#3A3836;
+    --text:#F1ECE6; --text-strong:#FBF7F2; --text-muted:#C8C1B8; --text-faint:#A59D93;
+    --primary:#3B82F6; --primary-hover:#60A5FA; --primary-strong:#93C5FD; --primary-soft:#1E293B;
+    --danger:#EF5350; --danger-hover:#F44336; --danger-strong:#E53935; --danger-soft:#3B1818;
+    --info-bg:#2C353D; --info-border:#3B82F6; 
+    --table-head:#353B42; --table-head-text:#F6F7F8;
+    --good-bg:#22362B; --moderate-bg:#3D3424; --bad-bg:#433126; --very-bad-bg:#472B2A; --terrible-bg:#3B3143;
+    --shadow:0 8px 24px rgba(0,0,0,.24);
+}
+
+/* ================================
+   3. ESTRUTURA E LAYOUT
+================================ */
+.content-wrap { padding-bottom:60px; }
+.cards-layout { display:flex; gap:16px; align-items:flex-start; margin-bottom:12px; }
+.card-left, .card-right { flex:1 1 0; min-width:0; box-sizing:border-box; }
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:15px; }
+
+/* ================================
+   4. COMPONENTES COMUNS
+================================ */
+.card { background:var(--surface); border-radius:16px; padding:16px; border:1px solid var(--border); box-shadow:var(--shadow); }
+.badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:30px; font-size:14px; font-weight:600; background:var(--surface-2); color:var(--text); border:1px solid var(--border); }
+.title-text { font-size:16px; font-weight:700; margin-bottom:12px; color:var(--text-strong); }
+.section-card, .chart-card, .qr-card, .hero-banner, .aqr-switcher, .info-box { margin-bottom:12px; }
+.chart-wrap { height:260px; }
+
+/* ================================
+   5. HEADER
+================================ */
+.header-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; background:var(--surface); border-radius:12px; padding:12px 16px; margin-bottom:12px; border:1px solid var(--border); box-shadow:var(--shadow); }
+.header-meta { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.header-title { font-size:18px; font-weight:700; color:var(--text-strong); }
+.header-subtitle { font-size:11px; color:var(--text-faint); white-space:nowrap; }
+.header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.theme-toggle { display:inline-flex; align-items:center; justify-content:center; min-width:40px; height:40px; border:none; border-radius:999px; background:var(--surface-2); cursor:pointer; border:1px solid var(--border); }
+
+/* ================================
+   6. CARDS DE DESTAQUE
+================================ */
+.card-left-top { display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 12px; margin-bottom: 15px; align-items: stretch; }
+.status-surface { border-radius: 14px; padding: 14px; margin-bottom: 0; border: 1px solid color-mix(in srgb, var(--accent-color) 38%, var(--border)); }
+.iqar-summary-card { display: flex; align-items: center; justify-content: center; text-align: center; }
+.iqar-summary-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+.iqar-eyebrow { font-size: 13px; font-weight: 600; line-height: 1.2; }
+.iqar-score { font-size: 52px; font-weight: 700; line-height: 1; color: var(--text-strong); }
+.status-accent-text { color: var(--accent-color) !important; }
+.status-badge { background: color-mix(in srgb, var(--accent-color) 14%, transparent); color: var(--accent-color) !important; border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border)); }
+.hero-banner-title { font-size:18px; font-weight:700; margin-bottom:6px; }
+.hero-banner-text { font-size:14px; color:var(--text-muted); line-height:1.5; }
+.slide-meta-text { margin-top: 8px; font-size: 13px; color: var(--text-faint); }
+
+/* ================================
+   7. POLUENTES & UI MENOR
+================================ */
+.pol-card { background:var(--surface); border-radius:14px; padding:14px; text-align:center; border:1px solid var(--border); }
+.pol-card-empty { background:var(--surface-2); }
+.pol-card-name { font-size:14px; font-weight:600; color:var(--text-faint); }
+.pol-card-iqa { font-size:34px; font-weight:700; margin-top:4px; }
+.pol-card-value { font-size:13px; color:var(--text-muted); margin:4px 0; }
+.pol-card-status { font-size:13px; font-weight:600; }
+.info-box { background:var(--info-bg); border-left:4px solid var(--info-border); border-radius:10px; padding:14px; font-size:14px; line-height:1.6; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; background:var(--surface); border-radius:12px; overflow:hidden; }
+th, td { padding:10px 8px; text-align:center; font-size:13px; border-bottom:1px solid var(--border-soft); }
+th { background:var(--table-head); color:var(--table-head-text); font-weight:600; }
+.aqr-switcher-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+.aqr-switcher-card { background:var(--surface); border-radius:12px; padding:12px; border:1px solid var(--border); }
+.aqr-switcher-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.aqr-switcher-text { font-size:12px; line-height:1.4; color:var(--text-muted); }
+.aqr-switcher-notice { margin-top:12px; padding:12px 14px; background:var(--surface-2); border-left:3px solid var(--primary); border-radius:10px; font-size:12px; }
+.btn-primary { margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--primary); color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer; }
+.btn-danger { margin-top:10px; width:100%; border:none; border-radius:12px; background:var(--danger); color:#fff; font-size:14px; font-weight:600; padding:12px 14px; cursor:pointer; }
+
+/* Status Colors Genéricas */
+.bg-boa { background: var(--good-bg); }
+.bg-moderada { background: var(--moderate-bg); }
+.bg-ruim { background: var(--bad-bg); }
+.bg-muito-ruim { background: var(--very-bad-bg); }
+.bg-pessima { background: var(--terrible-bg); }
+
+/* Loading State */
+.loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; }
+.spinner { border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width:768px) {
+    .cards-layout { flex-direction:column; }
+    .card-left, .card-right { width:100%; }
+    .card-left-top { grid-template-columns: minmax(100px, 130px) 1fr; }
+    .iqar-score { font-size: 48px; }
+    .cards-grid { grid-template-columns:repeat(3,1fr); gap:8px; }
+}
+@media(max-width:480px) { .cards-grid { grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top:16px; font-weight:600;">Conectando aos sensores da CETESB...</p>
+</div>
+
+<div class="content-wrap" style="display:none;" id="main-content">
+<div class="header-bar">
+    <div class="header-meta">
+        <span class="header-title">Respira Melhor • UBS Vila Curuçá</span>
+        <span class="header-subtitle" id="data-atualizacao">CETESB • Itaim Paulista • Carregando...</span>
+    </div>
+    <div class="header-actions">
+        <span class="header-subtitle">Tema</span>
+        <button id="themeToggleBtn" class="theme-toggle">🌙</button>
+    </div>
+</div>
+
+<div class="cards-layout" id="cardsLayout1">
+    <div class="card-left">
+        <div class="card-left-top">
+            <div class="iqar-summary-card status-surface ui-dynamic-bg">
+              <div class="iqar-summary-inner">
+                <div class="iqar-eyebrow status-accent-text">IQAr</div>
+                <div class="iqar-score" id="iqa-geral">--</div>
+                <div class="badge status-badge" id="iqa-badge">--</div>
+              </div>
+            </div>
+
+            <div class="primary-pollutant-card status-surface ui-dynamic-bg">
+              <div class="hero-banner-title status-accent-text" id="iqa-titulo">--</div>
+              <div class="hero-banner-text" id="iqa-recomendacao">Carregando dados da estação...</div>
+              <div class="slide-meta-text">Principal poluente: <b id="poluente-critico">--</b></div>
+            </div>
+        </div>
+
+        <div class="card section-card">
+            <div class="title-text">Tabela CONAMA 506/2024</div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Qualidade</th><th>IQAr</th><th>MP2.5</th><th>MP10</th><th>O₃</th><th>NO₂</th></tr></thead>
+                    <tbody>
+                        <tr class="bg-boa"><td>🟢 Boa</td><td>0–40</td><td>0–15</td><td>0–45</td><td>0–100</td><td>0–200</td></tr>
+                        <tr class="bg-moderada"><td>🟡 Moderada</td><td>41–80</td><td>15–50</td><td>45–100</td><td>100–130</td><td>200–240</td></tr>
+                        <tr class="bg-ruim"><td>🟠 Ruim</td><td>81–120</td><td>50–75</td><td>100–150</td><td>130–160</td><td>240–320</td></tr>
+                        <tr class="bg-muito-ruim"><td>🔴 Muito Ruim</td><td>121–200</td><td>75–125</td><td>150–250</td><td>160–200</td><td>320–1130</td></tr>
+                        <tr class="bg-pessima"><td>⚫ Péssima</td><td>201–400</td><td>125–300</td><td>250–600</td><td>200–800</td><td>1130–3750</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="aqr-switcher">
+            <div class="aqr-switcher-grid" id="aqrCards"></div>
+            <div class="aqr-switcher-notice" id="aqrNotice">--</div>
+        </div>
+    </div>
+
+    <div class="card-right">
+        <div class="info-box">
+            <b>O que é o IQAr?</b><br>O Índice de Qualidade do Ar vai de <b>0 a 400</b>; quanto menor, melhor. A nota final é sempre a do poluente mais crítico no momento.
+        </div>
+        <div class="card">
+            <div class="title-text">Sobre este painel</div>
+            <div style="font-size:14px; color:var(--text-muted); line-height:1.6;">
+                Serviço informativo da <strong>UBS Vila Curuçá</strong>. Baseado no Guia MMA/CETESB jan/2025.<br><br>
+                <strong>Grupos sensíveis:</strong> crianças, idosos, gestantes, asmáticos, e pessoas com doenças respiratórias/cardíacas.
+            </div>
+            <button id="loginBtn" class="btn-primary" type="button">Acessar área logada (Admin)</button>
+        </div>
+    </div>
+</div>
+
+<div class="cards-layout" id="cardsLayout2" style="display:none;">
+    <div class="card-left">
+        <div class="card-left-top">
+            <div class="iqar-summary-card status-surface ui-dynamic-bg">
+              <div class="iqar-summary-inner">
+                <div class="iqar-eyebrow status-accent-text">IQAr</div>
+                <div class="iqar-score ui-iqa-geral">--</div>
+                <div class="badge status-badge ui-iqa-badge">--</div>
+              </div>
+            </div>
+            <div class="primary-pollutant-card status-surface ui-dynamic-bg">
+              <div class="hero-banner-title status-accent-text ui-iqa-titulo">--</div>
+              <div class="hero-banner-text ui-iqa-recomendacao">--</div>
+              <div class="slide-meta-text">Principal poluente: <b class="ui-poluente-critico">--</b></div>
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cards-poluentes">
+            </div>
+
+        <div class="card chart-card">
+            <div class="title-text">📈 Evolução dos poluentes — últimas 48h</div>
+            <div class="chart-wrap"><canvas id="chart0"></canvas></div>
+        </div>
+    </div>
+
+    <div class="card-right">
+        <div class="info-box">
+            <b class="info-box-title">Previsão com IA (XGBoost)</b><br>
+            O modelo prevê a concentração de Partículas Finas (MP2.5) para as próximas 6 horas usando dados históricos.
+        </div>
+        <div class="card chart-card">
+            <div class="title-text">MP2.5 histórico 24h + previsão 6h</div>
+            <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+        </div>
+        <div class="card chart-card">
+            <div class="title-text">IQAr previsto (MP2.5)</div>
+            <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+            <button id="logoffBtn" class="btn-danger" type="button">Sair área logada</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+// ==========================================
+// 1. CONFIGURAÇÕES E API
+// ==========================================
+const API_URL = "http://127.0.0.1:8000/api/qualidade"; // URL Local para teste
+const TEMPO_CACHE_MS = 15 * 60 * 1000; // 15 minutos
+
+// Variáveis globais para os gráficos (para poder destruí-los ao recarregar)
+let chart0Instance = null;
+let chart1Instance = null;
+let chart2Instance = null;
+
+// ==========================================
+// 2. TEMA (CLARO/ESCURO)
+// ==========================================
+function getCssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+const root = document.documentElement;
+let currentTheme = localStorage.getItem("theme") || "dark";
+root.setAttribute("data-theme", currentTheme);
+
+function applyChartTheme() {
+    Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = getCssVar("--text-faint");
+    Chart.defaults.borderColor = getCssVar("--border-soft");
+    
+    // Se os gráficos já existem, precisamos atualizá-los quando trocar de tema
+    if(chart0Instance) chart0Instance.update();
+    if(chart1Instance) chart1Instance.update();
+    if(chart2Instance) chart2Instance.update();
+}
+
+document.getElementById("themeToggleBtn").addEventListener("click", () => {
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("theme", currentTheme);
+    document.getElementById("themeToggleBtn").textContent = currentTheme === "dark" ? "☀️" : "🌙";
+    applyChartTheme();
+});
+document.getElementById("themeToggleBtn").textContent = currentTheme === "dark" ? "☀️" : "🌙";
+applyChartTheme();
+
+// ==========================================
+// 3. NAVEGAÇÃO E RECOMENDAÇÕES (UX)
+// ==========================================
+const cardLayout1 = document.getElementById("cardsLayout1");
+const cardLayout2 = document.getElementById("cardsLayout2");
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+    let senha = prompt("Área logada. Digite a senha:");
+    if (senha === "vila123") {
+        cardLayout1.style.display = "none";
+        cardLayout2.style.display = "flex";
+        window.scrollTo(0, 0);
+    } else { alert("Senha incorreta."); }
+});
+
+document.getElementById("logoffBtn").addEventListener("click", () => {
+    cardLayout1.style.display = "flex";
+    cardLayout2.style.display = "none";
+    window.scrollTo(0, 0);
+});
+
+// ==========================================
+// 4. LÓGICA DE CACHE E FETCH
+// ==========================================
+async function iniciarApp() {
+    const cache = localStorage.getItem('ar_cache');
+    const tempoSalvo = localStorage.getItem('ar_tempo');
+    const agora = Date.now();
+
+    try {
+        if (cache && tempoSalvo && (agora - tempoSalvo < TEMPO_CACHE_MS)) {
+            console.log("Servindo via Cache Local");
+            preencherInterface(JSON.parse(cache));
+        } else {
+            console.log("Fazendo fetch na API Python...");
+            const resposta = await fetch(API_URL);
+            if(!resposta.ok) throw new Error("Erro na API");
+            
+            const dados = await resposta.json();
+            localStorage.setItem('ar_cache', JSON.stringify(dados));
+            localStorage.setItem('ar_tempo', agora);
+            preencherInterface(dados);
+        }
+    } catch (erro) {
+        console.error(erro);
+        if(cache) {
+            Toastify({text: "Servidor indisponível. Exibindo últimos dados salvos.", backgroundColor: "orange"}).showToast();
+            preencherInterface(JSON.parse(cache));
+        } else {
+            alert("Erro ao conectar com os sensores. Verifique se o Python (FastAPI) está rodando.");
+        }
+    } finally {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+    }
+}
+
+// ==========================================
+// 5. ATUALIZAR DOM
+// ==========================================
+function preencherInterface(dados) {
+    document.getElementById("data-atualizacao").textContent = `CETESB • Itaim Paulista • ${dados.data_coleta}`;
+    
+    const elementsScore = document.querySelectorAll(".ui-iqa-geral, #iqa-geral");
+    const elementsBadge = document.querySelectorAll(".ui-iqa-badge, #iqa-badge");
+    const elementsPol = document.querySelectorAll(".ui-poluente-critico, #poluente-critico");
+    const elementsTitulo = document.querySelectorAll(".ui-iqa-titulo, #iqa-titulo");
+    const elementsRec = document.querySelectorAll(".ui-iqa-recomendacao, #iqa-recomendacao");
+
+    elementsScore.forEach(el => el.textContent = dados.iqa_geral);
+    elementsBadge.forEach(el => el.textContent = dados.classificacao);
+    elementsPol.forEach(el => el.textContent = dados.poluente_critico);
+    elementsTitulo.forEach(el => el.textContent = `${dados.icone} ${dados.classificacao}`);
+    elementsRec.forEach(el => el.textContent = dados.recomendacao_padrao);
+
+    root.style.setProperty("--accent-color", dados.cor_hex);
+    document.querySelectorAll(".ui-dynamic-bg").forEach(el => { el.style.backgroundColor = dados.cor_bg_fundo; });
+
+    const containerPoluentes = document.getElementById("cards-poluentes");
+    containerPoluentes.innerHTML = "";
+    dados.poluentes.forEach(p => {
+        if(p.iqa !== null) {
+            containerPoluentes.innerHTML += `
+                <div class="pol-card">
+                    <div class="pol-card-name">${p.nome}</div>
+                    <div class="pol-card-iqa" style="color:${p.cor_hex}">${p.iqa}</div>
+                    <div class="pol-card-value">${p.valor} ${p.unidade}</div>
+                    <div class="pol-card-status" style="color:${p.cor_hex}">${p.status}</div>
+                </div>`;
+        } else {
+            containerPoluentes.innerHTML += `
+                <div class="pol-card pol-card-empty">
+                    <div class="pol-card-name">${p.nome}</div>
+                    <div class="pol-card-iqa" style="color:var(--text-faint)">--</div>
+                    <div class="pol-card-empty-text">Não monitorado</div>
+                </div>`;
+        }
+    });
+
+    if(dados.graficos) {
+        renderizarGraficos(dados.graficos);
+    }
+}
+
+// ==========================================
+// 6. RENDERIZAR GRÁFICOS (CHART.JS)
+// ==========================================
+function renderizarGraficos(graficos) {
+    const baseOpts = {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { tooltip: { mode:"index", intersect:false } },
+        scales: {
+            x: { grid: { display:false }, ticks: { maxRotation:30, maxTicksLimit:8, color: () => getCssVar("--text-faint") } },
+            y: { grid: { color: () => getCssVar("--border-soft") }, ticks: { color: () => getCssVar("--text-faint") } }
+        }
+    };
+
+    // --- GRÁFICO 0: Histórico 48h ---
+    if(chart0Instance) chart0Instance.destroy(); // Destrói gráfico antigo se existir
+    chart0Instance = new Chart(document.getElementById("chart0"), {
+        type: "line",
+        data: {
+            labels: graficos.historico_48h.labels,
+            datasets: [
+                { label:"MP2.5", data: graficos.historico_48h.mp25, borderColor:"#2980B9", borderWidth:2.5, pointRadius:0, tension:0.4, fill:false },
+                { label:"MP10",  data: graficos.historico_48h.mp10, borderColor:"#27AE60", borderWidth:2.5, pointRadius:0, tension:0.4, fill:false },
+                { label:"O₃",    data: graficos.historico_48h.o3,   borderColor:"#E74C3C", borderWidth:2.5, pointRadius:0, tension:0.4, fill:false },
+                { label:"NO₂",   data: graficos.historico_48h.no2,  borderColor:"#F39C12", borderWidth:2.5, pointRadius:0, tension:0.4, fill:false }
+            ]
+        },
+        options: {
+            ...baseOpts,
+            plugins: { ...baseOpts.plugins, legend: { position:"bottom", labels: { font: { size:11 }, color: () => getCssVar("--text-faint") } } }
+        }
+    });
+
+    // --- GRÁFICO 1: Histórico 24h + Previsão ---
+    const allLabels = graficos.previsao_mp25.hist24_labels.concat(graficos.previsao_mp25.fc_labels);
+    const histData = graficos.previsao_mp25.hist24_vals.concat(Array(graficos.previsao_mp25.fc_labels.length).fill(null));
+    const fcData = Array(graficos.previsao_mp25.hist24_labels.length).fill(null).concat(graficos.previsao_mp25.fc_conc);
+
+    if (allLabels.length > 0) {
+        if(chart1Instance) chart1Instance.destroy();
+        chart1Instance = new Chart(document.getElementById("chart1"), {
+            type: "line",
+            data: {
+                labels: allLabels,
+                datasets: [
+                    { label:"Medido (24h)", data:histData, borderColor:"#2980B9", borderWidth:2.5, pointRadius:0, tension:0.4, fill:false },
+                    { label:"Previsão (6h)", data:fcData, borderColor:"#E67E22", borderWidth:3, borderDash:[6,4], pointRadius:4, pointBackgroundColor:"#E67E22", tension:0.4, fill:false }
+                ]
+            },
+            options: {
+                ...baseOpts,
+                plugins: { ...baseOpts.plugins, legend: { position:"bottom", labels: { font: { size:11 }, color: () => getCssVar("--text-faint") } } },
+                scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, title: { display:true, text:"µg/m³", font: { size:11 }, color: () => getCssVar("--text-faint") } } }
+            }
+        });
+    }
+
+    // --- GRÁFICO 2: IQAr Previsto com Faixas de Cores ---
+    const fcLabels = graficos.previsao_mp25.fc_labels;
+    const fcIqa = graficos.previsao_mp25.fc_iqa;
+    
+    if (fcLabels.length > 0) {
+        const iqa_max = Math.max(...fcIqa.filter(v => v !== null));
+        const yMax = Math.max(90, iqa_max + 15);
+
+        if(chart2Instance) chart2Instance.destroy();
+        chart2Instance = new Chart(document.getElementById("chart2"), {
+            type: "line",
+            data: {
+                labels: fcLabels,
+                datasets: [
+                    { label:"_boa", data: fcLabels.map(() => 40), borderWidth:0, pointRadius:0, backgroundColor:"rgba(39,174,96,0.12)", fill:{ target:"origin", above:"rgba(39,174,96,0.12)" }, tension:0, order:5 },
+                    { label:"_mod", data: fcLabels.map(() => 80), borderWidth:0, pointRadius:0, backgroundColor:"rgba(243,156,18,0.12)", fill:{ target:{ value:40 }, above:"rgba(243,156,18,0.12)" }, tension:0, order:4 },
+                    { label:"_ruim", data: fcLabels.map(() => 120), borderWidth:0, pointRadius:0, backgroundColor:"rgba(230,126,34,0.12)", fill:{ target:{ value:80 }, above:"rgba(230,126,34,0.12)" }, tension:0, order:3 },
+                    { label:"_mruim", data: fcLabels.map(() => 200), borderWidth:0, pointRadius:0, backgroundColor:"rgba(231,76,60,0.12)", fill:{ target:{ value:120 }, above:"rgba(231,76,60,0.12)" }, tension:0, order:2 },
+                    { label:"IQAr previsto", data:fcIqa, borderColor:"#8E44AD", borderWidth:3, pointRadius:5, pointBackgroundColor:"#8E44AD", tension:0.3, fill:false, order:1 }
+                ]
+            },
+            options: {
+                responsive:true, maintainAspectRatio:false,
+                plugins: {
+                    legend: { display:false },
+                    tooltip: { mode:"index", intersect:false, filter: item => item.dataset.label === "IQAr previsto" },
+                    annotation: {
+                        annotations: {
+                            lBoa: { type:"line", yMin:40, yMax:40, borderColor:"rgba(39,174,96,0.5)", borderWidth:1, borderDash:[4,4], label:{ content:"Boa", display:true, position:"end", color:"#27AE60", font:{size:10}, padding:2 } },
+                            lMod: { type:"line", yMin:80, yMax:80, borderColor:"rgba(243,156,18,0.5)", borderWidth:1, borderDash:[4,4], label:{ content:"Moderada", display:true, position:"end", color:"#F39C12", font:{size:10}, padding:2 } },
+                            lRuim: { type:"line", yMin:120, yMax:120, borderColor:"rgba(230,126,34,0.5)", borderWidth:1, borderDash:[4,4], label:{ content:"Ruim", display:true, position:"end", color:"#E67E22", font:{size:10}, padding:2 } }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid:{ display:false }, ticks:{ maxRotation:0, font:{ size:11 }, color: () => getCssVar("--text-faint") } },
+                    y: { grid: { color: () => getCssVar("--border-soft") }, min: 0, max: yMax, title: { display:true, text:"IQAr MP2.5", font:{ size:11 }, color: () => getCssVar("--text-faint") }, ticks: { color: () => getCssVar("--text-faint") } }
+                }
+            }
+        });
+    }
+}
+
+// Iniciar a aplicação
+iniciarApp();
+</script>
+</body>
+</html>
