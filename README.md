@@ -1,5 +1,13 @@
 # Respira Melhor
 
+![UNIVESP - Projeto Integrador IV](https://img.shields.io/badge/UNIVESP-Projeto%20Integrador%20IV-C62828?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-prototipo%20concluido-2EA44F?style=for-the-badge)
+
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-009688?logo=fastapi&logoColor=white)
+![ML](https://img.shields.io/badge/ML-XGBoost-FE7A16?logo=xgboost&logoColor=white)
+![Charts](https://img.shields.io/badge/Charts-Chart.js-FF6384?logo=chartdotjs&logoColor=white)
+
 Painel web de monitoramento da qualidade do ar com foco em saúde pública local, integrando dados oficiais da CETESB, cálculo de IQAr conforme CONAMA 506/2024 e previsão de curto prazo com Machine Learning.
 
 Projeto desenvolvido para dar suporte informativo ao território da UBS Vila Curuça, com linguagem acessível para a população e camada técnica para análise detalhada.
@@ -12,11 +20,18 @@ Referência oficial sobre o Projeto Integrador da Univesp:
 
 - https://apps.univesp.br/o-que-e-projeto-integrador/
 
+### Valor acadêmico e de portfólio
+
+- Problema real com impacto social: apoio informativo em saúde ambiental para território local.
+- Integração ponta a ponta: coleta de dados oficiais, processamento, modelagem preditiva e visualização.
+- Alinhamento com competências do PI: aplicação interdisciplinar, entrega funcional e evidência técnica.
+- Material pronto para banca e GitHub: documentação, arquitetura, API, prints e roadmap.
+
 ## Visão geral
 
 O sistema coleta dados horários de poluentes atmosféricos da estação Itaim Paulista (CETESB), calcula o índice de qualidade do ar por poluente, determina o IQAr geral (pior caso) e apresenta recomendações de cuidado em saúde.
 
-Além da visão principal para público geral, o projeto possui uma área de análise detalhada (atual "área logada", em transição de nome para **Mais detalhes**) com gráficos históricos e recursos preditivos baseados em IA.
+Além da visão principal para público geral, o projeto possui a área **Mais detalhes**, com gráficos históricos e recursos preditivos baseados em IA.
 
 ## Principais funcionalidades implementadas
 
@@ -28,7 +43,7 @@ Além da visão principal para público geral, o projeto possui uma área de an�
 - Acesso direto à área de análise detalhada (Mais detalhes).
 - Cache no backend (TTL de 10 minutos) para reduzir carga externa e melhorar disponibilidade.
 - Cache local no frontend (15 minutos) para resiliência quando houver indisponibilidade temporária da API.
-- Área de análise detalhada (futura seção **Mais detalhes**) com gráficos de histórico e previsão.
+- Área **Mais detalhes** com gráficos de histórico e previsão.
 
 ## Destaque: dados preditivos com ML
 
@@ -48,7 +63,7 @@ O backend já entrega previsão de curto prazo com modelo **XGBoost** para MP2.5
 
 ## Destaque: gráficos da área "Mais detalhes"
 
-Na seção atualmente chamada "área logada" (renomeação prevista para **Mais detalhes**), já estão implementados 3 blocos gráficos:
+Na seção **Mais detalhes**, já estão implementados 3 blocos gráficos:
 
 1. **Evolução dos poluentes (48h)**
    - Série temporal comparativa de MP2.5, MP10, O3 e NO2.
@@ -64,15 +79,15 @@ Esses gráficos já consomem diretamente o payload estruturado da API em `grafic
 ## Arquitetura da solução
 
 ```mermaid
-flowchart LR
-    A[CETESB QUALAR ArcGIS] --> B[FastAPI backend/api.py]
-    B --> C[Calculo IQAr + Classificacao]
-    B --> D[Forecast ML XGBoost MP2.5]
-    C --> E[Endpoint /api/qualidade]
-    D --> E
-    E --> F[Frontend web index.html]
-    F --> G[Painel publico]
-    F --> H[Mais detalhes - historico + previsao]
+flowchart TD
+  A[CETESB QUALAR ArcGIS] --> B[Backend FastAPI api.py]
+  B --> C[Calculo de IQAr e classificacao]
+  B --> D[Forecast ML XGBoost MP2.5]
+  C --> E[Endpoint API /api/qualidade]
+  D --> E
+  E --> F[Frontend web index.html]
+  F --> G[Painel publico]
+  F --> H[Mais detalhes: historico e previsao]
 ```
 
 ## Stack técnica
