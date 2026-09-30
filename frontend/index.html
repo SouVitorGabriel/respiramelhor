@@ -311,7 +311,7 @@ th:first-child, td:first-child { text-align:left; font-weight:600; } /* Ajuste d
                 <span>Os dados são atualizados a cada hora e refletem a qualidade do ar nas últimas horas, não o instante exato da consulta.</span>
             </div>
 
-            <button id="loginBtn" class="btn-primary" type="button">Acessar área logada (Admin)</button>
+            <button id="loginBtn" class="btn-primary" type="button">Mais detalhes</button>
         </div>
     </div>
 </div>
@@ -354,7 +354,7 @@ th:first-child, td:first-child { text-align:left; font-weight:600; } /* Ajuste d
         <div class="card chart-card">
             <div class="title-text">IQAr previsto (MP2.5)</div>
             <div class="chart-wrap"><canvas id="chart2"></canvas></div>
-            <button id="logoffBtn" class="btn-danger" type="button">Sair área logada</button>
+            <button id="logoffBtn" class="btn-danger" type="button">Voltar</button>
         </div>
     </div>
 </div>
@@ -401,18 +401,15 @@ document.getElementById("themeToggleBtn").textContent = currentTheme === "dark" 
 applyChartTheme();
 
 // ==========================================
-// 3. NAVEGAÇÃO E RECOMENDAÇÕES (UX)
+// 3. NAVEGAÇÃO ENTRE VISÕES (UX)
 // ==========================================
 const cardLayout1 = document.getElementById("cardsLayout1");
 const cardLayout2 = document.getElementById("cardsLayout2");
 
 document.getElementById("loginBtn").addEventListener("click", () => {
-    let senha = prompt("Área logada. Digite a senha:");
-    if (senha === "vila123") {
-        cardLayout1.style.display = "none";
-        cardLayout2.style.display = "flex";
-        window.scrollTo(0, 0);
-    } else { alert("Senha incorreta."); }
+    cardLayout1.style.display = "none";
+    cardLayout2.style.display = "flex";
+    window.scrollTo(0, 0);
 });
 
 document.getElementById("logoffBtn").addEventListener("click", () => {
